@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
+@import "tailwindcss";
+@layer base {
+  * {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+  }
+  #__nuxt {
+    @apply h-screen bg-light-blue;
+  }
+  p {
+    @apply text-xl;
+  }
+}
+
+@theme {
+  --color-dark-blue: #194065;
+  --color-light-blue: #1f517f;
+  --color-red: #ea2f55;
+  --color-orange: #fe8835;
+}
