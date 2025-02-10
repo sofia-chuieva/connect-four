@@ -48,7 +48,7 @@
 @reference "../assets/css/main.css";
 
 .container {
-  @apply mx-auto max-w-3xl px-6 w-full h-screen flex items-center justify-center;
+  @apply mx-auto max-w-3xl px-10 w-full h-screen flex items-center justify-center;
 
   .wrapper {
     @apply relative;
