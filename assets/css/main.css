@@ -9,7 +9,7 @@
     @apply h-screen bg-light-blue;
   }
   p {
-    @apply text-xl;
+    @apply text-base md:text-xl;
   }
 }
 

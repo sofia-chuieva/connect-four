@@ -8,25 +8,37 @@
           class="w-fit"
         />
         <div class="buttons">
-          <button class="player-vs-cpu-btn">
-            <p>Play vs CPU</p>
-            <img src="../assets/images/player-vs-cpu.svg" alt="player-vs-cpu" />
-          </button>
-          <div class="player-vs-cpu-bg"></div>
-          <button class="player-vs-player-btn">
-            <p>Play vs Player</p>
-            <img
-              src="../assets/images/player-vs-player.svg"
-              alt="player-vs-player"
-            />
-          </button>
-          <div class="player-vs-player-bg"></div>
-          <button class="rules-btn">
-            <p>Game Rules</p>
-          </button>
-          <div class="rules-bg"></div>
+          <div class="btn-wrapper">
+            <button class="player-vs-cpu-btn">
+              <p>Play vs CPU</p>
+              <img
+                src="../assets/images/player-vs-cpu.svg"
+                alt="player-vs-cpu"
+              />
+            </button>
+            <div class="player-vs-cpu-bg"></div>
+          </div>
+
+          <div class="btn-wrapper">
+            <button class="player-vs-player-btn">
+              <p>Play vs Player</p>
+              <img
+                src="../assets/images/player-vs-player.svg"
+                alt="player-vs-player"
+              />
+            </button>
+            <div class="player-vs-player-bg"></div>
+          </div>
+
+          <div class="btn-wrapper">
+            <button class="rules-btn">
+              <p>Game Rules</p>
+            </button>
+            <div class="rules-bg"></div>
+          </div>
         </div>
       </div>
+
       <div class="menu-bg"></div>
     </div>
   </div>
@@ -47,38 +59,28 @@
       .buttons {
         @apply flex flex-col w-full gap-8;
 
+        .btn-wrapper {
+          @apply relative;
+        }
+
         button {
-          @apply flex cursor-pointer px-8 py-3 relative z-20 justify-between items-center uppercase rounded-3xl border-[3px] border-black;
+          @apply flex text-left cursor-pointer px-8 py-3 relative z-20 w-full justify-between items-center uppercase rounded-3xl border-[3px] border-black;
         }
 
         .player-vs-cpu-btn {
           @apply bg-red;
         }
-
-        .player-vs-cpu-bg {
-          @apply w-[395px] h-[74px] top-[36%];
-        }
-
         .player-vs-player-btn {
           @apply bg-orange;
         }
-
-        .player-vs-player-bg {
-          @apply w-[395px] h-[74px] top-[58%];
-        }
-
-        .player-vs-player-bg,
-        .player-vs-cpu-bg,
-        .rules-bg {
-          @apply absolute bg-black rounded-3xl z-10;
-        }
-
         .rules-btn {
           @apply bg-white py-5;
         }
 
+        .player-vs-cpu-bg,
+        .player-vs-player-bg,
         .rules-bg {
-          @apply w-[395px] h-[74px] top-[79%];
+          @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-3;
         }
       }
     }
