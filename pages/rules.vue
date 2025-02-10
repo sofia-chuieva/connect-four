@@ -1,3 +1,3 @@
 <template>
-  <GameBoard />
+  <Rules />
 </template>

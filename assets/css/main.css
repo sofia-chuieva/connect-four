@@ -8,8 +8,17 @@
   #__nuxt {
     @apply h-screen bg-light-blue;
   }
-  p {
+
+  p,
+  ol,
+  ul {
     @apply text-base md:text-xl;
+  }
+  h1 {
+    @apply text-5xl uppercase;
+  }
+  h2 {
+    @apply text-3xl uppercase;
   }
 }
 

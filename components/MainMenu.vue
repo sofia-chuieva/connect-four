@@ -9,7 +9,7 @@
         />
         <div class="buttons">
           <div class="btn-wrapper">
-            <button class="player-vs-cpu-btn">
+            <button @click="goToGame" class="player-vs-cpu-btn">
               <p>Play vs CPU</p>
               <img
                 src="../assets/images/player-vs-cpu.svg"
@@ -31,7 +31,7 @@
           </div>
 
           <div class="btn-wrapper">
-            <button class="rules-btn">
+            <button @click="goToRules" class="rules-btn">
               <p>Game Rules</p>
             </button>
             <div class="rules-bg"></div>
@@ -91,3 +91,16 @@
   }
 }
 </style>
+
+<script setup>
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+function goToGame() {
+  router.push({ path: "/game" });
+}
+
+function goToRules() {
+  router.push({ path: "/rules" });
+}
+</script>
