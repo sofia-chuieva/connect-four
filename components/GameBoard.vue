@@ -1,8 +1,15 @@
 <template>
   <div class="container">
+    <div class="player-wrapper">
+      <div class="player player-1">
+        <img src="../assets/images/player-one-smiley-face.svg" alt="" />
+        <p class="uppercase">Player 1</p>
+        <h1 class="pt-4 pb-10">5</h1>
+      </div>
+      <div class="player-bg"></div>
+    </div>
     <div class="board-wrapper">
       <Board class="board-background" />
-
       <svg class="board-overlay">
         <g v-for="(row, rowIndex) in board" :key="'row-' + rowIndex">
           <rect
@@ -26,6 +33,14 @@
         </div>
         <Timer />
       </div>
+    </div>
+    <div class="player-wrapper">
+      <div class="player player-2">
+        <img src="../assets/images/player-two-smiley-face.svg" alt="" />
+        <p class="uppercase">Player 2</p>
+        <h1 class="pt-4 pb-10">5</h1>
+      </div>
+      <div class="player-bg"></div>
     </div>
   </div>
   <div class="bg-footer"></div>
@@ -52,7 +67,23 @@ const cellHeight = boardHeight / rows;
 @reference "../assets/css/main.css";
 
 .container {
-  @apply mx-auto relative max-w-3xl z-20 px-10 w-full h-screen flex-col flex items-center justify-center;
+  @apply mx-auto relative gap-20 z-20 px-10 w-full h-screen flex-row flex items-center justify-center;
+
+  .player-wrapper {
+    @apply relative;
+
+    .player {
+      @apply flex flex-col relative z-20 bg-white rounded-4xl border-[3px] border-black pt-7 px-6 text-center;
+
+      img {
+        @apply absolute -top-[28%] left-1/2 -translate-x-1/2;
+      }
+    }
+
+    .player-bg {
+      @apply absolute inset-0 bg-black rounded-4xl z-10 translate-y-3;
+    }
+  }
 
   .board-wrapper {
     @apply relative w-[630px] h-[590px];
