@@ -1,42 +1,81 @@
 <template>
-  <div class="game-bg">
-    <div class="game-inner">
-      <div class="game-board">
-        <img
-          src="../assets/images/board-white.svg"
-          alt=""
-          class="board-white"
-        />
-        <img
-          src="../assets/images/board-black.svg"
-          alt=""
-          class="board-black"
-        />
+  <div class="container">
+    <div class="board-wrapper">
+      <Board class="board-background" />
+
+      <svg class="board-overlay">
+        <g v-for="(row, rowIndex) in board" :key="'row-' + rowIndex">
+          <rect
+            v-for="(_, colIndex) in row"
+            :key="rowIndex + '-' + colIndex"
+            :x="colIndex * cellWidth"
+            :y="rowIndex * cellHeight"
+            :width="cellWidth"
+            :height="cellHeight"
+            fill="transparent"
+            stroke="rgba(255, 0, 0, 0.5)"
+            stroke-width="2"
+            :id="rowIndex + '-' + colIndex"
+          />
+        </g>
+      </svg>
+      <div class="timer">
+        <div class="timer-wrapper">
+          <p class="font-bold text-white text-base">PLAYER 1’S TURN</p>
+          <h1 class="text-white">10s</h1>
+        </div>
+        <Timer />
       </div>
     </div>
   </div>
+  <div class="bg-footer"></div>
 </template>
 
-<style>
+<script setup>
+import { ref } from "vue";
+import Board from "../assets/images/board.svg";
+import Timer from "../assets/images/timer.svg";
+
+const boardWidth = 630;
+const boardHeight = 540;
+
+const rows = 6;
+const cols = 7;
+
+const board = ref(Array.from({ length: rows }, () => Array(cols).fill(null)));
+
+const cellWidth = boardWidth / cols;
+const cellHeight = boardHeight / rows;
+</script>
+
+<style scoped>
 @reference "../assets/css/main.css";
 
-.game-bg {
-  @apply w-full h-full flex justify-center items-center bg-light-blue;
+.container {
+  @apply mx-auto relative max-w-3xl z-20 px-10 w-full h-screen flex-col flex items-center justify-center;
 
-  .game-inner {
-    @apply flex justify-center items-center w-full h-full;
+  .board-wrapper {
+    @apply relative w-[630px] h-[590px];
 
-    .game-board {
-      @apply flex justify-center items-center relative;
+    .timer {
+      @apply absolute left-1/2 translate-x-[-50%] text-center -bottom-[20%];
 
-      .board-black {
-        @apply absolute z-10 top-0;
-      }
-
-      .board-white {
-        @apply z-20;
+      .timer-wrapper {
+        @apply absolute w-full top-[30%] left-0;
       }
     }
+
+    .board-background {
+      @apply absolute top-0 left-0 w-[632px] h-[596px];
+    }
+
+    .board-overlay {
+      @apply absolute top-0 left-0 w-[630px] h-[540px];
+    }
   }
+}
+
+.bg-footer {
+  @apply w-full bottom-0 bg-dark-blue absolute h-[calc(50%-255px)] rounded-t-[60px];
 }
 </style>
