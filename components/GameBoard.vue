@@ -73,10 +73,10 @@ const cellHeight = boardHeight / rows;
     @apply relative;
 
     .player {
-      @apply flex flex-col relative z-20 bg-white rounded-4xl border-[3px] border-black pt-7 px-6 text-center;
+      @apply flex flex-col relative z-20 bg-white rounded-4xl border-[3px] border-black pt-10 px-6 text-center;
 
       img {
-        @apply absolute -top-[28%] left-1/2 -translate-x-1/2;
+        @apply absolute -top-[18%] left-1/2 -translate-x-1/2;
       }
     }
 
