@@ -47,7 +47,7 @@
     @apply relative;
 
     .rules {
-      @apply relative z-20 gap-4 md:gap-8 pt-10 px-10 pb-16 items-center flex flex-col bg-white rounded-4xl border-[3px] border-black;
+      @apply relative z-20 gap-4 md:gap-8 pt-10 px-10 pb-14 items-center flex flex-col bg-white rounded-4xl border-[3px] border-black;
 
       li::marker {
         @apply text-red;
@@ -58,7 +58,7 @@
       }
 
       h2 {
-        @apply text-light-blue pb-2 md:pb-4;
+        @apply text-light-blue pb-2 md:pb-3;
       }
     }
 
