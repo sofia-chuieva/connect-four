@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="menu">
         <img
-          src="../assets/images/logo-connect-four.svg"
+          src="/images/logo-connect-four.svg"
           alt="logo connect four"
           class="w-fit"
         />
@@ -12,7 +12,7 @@
             <button @click="goToGame" class="player-vs-cpu-btn">
               <p>Play vs CPU</p>
               <img
-                src="../assets/images/player-vs-cpu.svg"
+                src="/images/player-vs-cpu.svg"
                 alt="player-vs-cpu"
               />
             </button>
@@ -23,7 +23,7 @@
             <button class="player-vs-player-btn">
               <p>Play vs Player</p>
               <img
-                src="../assets/images/player-vs-player.svg"
+                src="/images/player-vs-player.svg"
                 alt="player-vs-player"
               />
             </button>

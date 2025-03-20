@@ -35,6 +35,6 @@ const props = defineProps({
 });
 
 function getImageUrl() {
-  return new URL(`../assets/images/${props.icon}`, import.meta.url);
+  return `/images/${props.icon}`;
 }
 </script>

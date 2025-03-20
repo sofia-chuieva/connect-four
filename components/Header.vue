@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <button>Menu</button>
-    <img src="../assets/images/logo-connect-four.svg" alt="" />
+    <img src="/images/logo-connect-four.svg" alt="" />
   </div>
 </template>
 

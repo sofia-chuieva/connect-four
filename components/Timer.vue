@@ -4,7 +4,7 @@
       <p class="font-bold text-white text-base">PLAYER 1’S TURN</p>
       <h1 class="text-white">10s</h1>
     </div>
-    <img src="../assets/images/timer.svg" alt="Timer" />
+    <img src="/images/timer.svg" alt="Timer" />
   </div>
 </template>
 

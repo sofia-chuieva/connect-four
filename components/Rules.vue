@@ -28,7 +28,7 @@
       <div class="icon-check">
         <img
           @click="goToMenu"
-          src="../assets/images/icon-check.svg"
+          src="/images/icon-check.svg"
           alt="icon-check"
         />
       </div>
