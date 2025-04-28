@@ -26,7 +26,7 @@
             :class="['col', `col${col}`]"
             @mouseenter="hoverColumn = col - 1"
             @mouseleave="hoverColumn = null"
-            @click="dropDisk(col - 1)"
+            @click="playMove(col - 1)"
           ></div>
         </div>
         <div class="cells-grid">
@@ -44,6 +44,10 @@
                 v-if="getDiskAtCell(cellIndex)"
                 class="disk-wrapper drop-animation"
               >
+                <div
+                  v-if="isWinningCell(cellIndex)"
+                  class="winner-circle"
+                ></div>
                 <img
                   :src="
                     getDiskAtCell(cellIndex).player === 1
@@ -76,7 +80,8 @@ const cols = 7;
 const totalCells = rows * cols;
 const cellIndices = Array.from({ length: totalCells }, (_, i) => i);
 const hoverColumn = ref(null);
-
+const winner = ref(null);
+const winningCells = ref([]);
 // Grid spacing values (using 0.8rem, ~12.8px with 16px = 1rem)
 const remInPx = 16;
 const gridPadding = 0.8 * remInPx; // about 12.8px of padding
@@ -153,9 +158,7 @@ function diskTop(row) {
  */
 function dropDisk(col) {
   const targetRow = lowestEmptyRow(col);
-  if (targetRow === -1) {
-    return;
-  }
+  if (targetRow === -1) return;
 
   // Update board state.
   board.value[targetRow][col] = currentPlayer.value;
@@ -169,9 +172,7 @@ function dropDisk(col) {
   };
 
   droppedDisks.value.push(newDisk);
-
-  // Toggle player turn.
-  currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
+  return { targetRow, col };
 }
 
 /**
@@ -185,6 +186,109 @@ function getDiskAtCell(cellIndex) {
   return droppedDisks.value.find(
     (disk) => disk.row === row && disk.column === col
   );
+}
+
+function isWinningCell(cellIndex) {
+  const row = cellToRow(cellIndex);
+  const col = cellToColumn(cellIndex);
+  return winningCells.value.some(
+    (cell) => cell.row === row && cell.col === col
+  );
+}
+
+function isWinningMove(targetRow, col) {
+  let player = board.value[targetRow][col];
+  winningCells.value = [];
+
+  // vertical
+  for (let row = 0; row < rows - 3; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (
+        board.value[row][col] === player &&
+        board.value[row + 1][col] === player &&
+        board.value[row + 2][col] === player &&
+        board.value[row + 3][col] === player
+      ) {
+        winningCells.value = [
+          { row, col },
+          { row: row + 1, col },
+          { row: row + 2, col },
+          { row: row + 3, col },
+        ];
+        return true;
+      }
+    }
+  }
+  // horizontal
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        board.value[row][col] === player &&
+        board.value[row][col + 1] === player &&
+        board.value[row][col + 2] === player &&
+        board.value[row][col + 3] === player
+      ) {
+        winningCells.value = [
+          { row, col },
+          { row, col: col + 1 },
+          { row, col: col + 2 },
+          { row, col: col + 3 },
+        ];
+        return true;
+      }
+    }
+  }
+  // diag right
+  for (let row = 0; row <= rows - 4; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        board.value[row][col] === player &&
+        board.value[row + 1][col + 1] === player &&
+        board.value[row + 2][col + 2] === player &&
+        board.value[row + 3][col + 3] === player
+      ) {
+        winningCells.value = [
+          { row, col },
+          { row: row + 1, col: col + 1 },
+          { row: row + 2, col: col + 2 },
+          { row: row + 3, col: col + 3 },
+        ];
+        return true;
+      }
+    }
+  }
+  // diag left
+  for (let row = 3; row < rows; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        board.value[row][col] === player &&
+        board.value[row - 1][col + 1] === player &&
+        board.value[row - 2][col + 2] === player &&
+        board.value[row - 3][col + 3] === player
+      ) {
+        winningCells.value = [
+          { row, col },
+          { row: row - 1, col: col + 1 },
+          { row: row - 2, col: col + 2 },
+          { row: row - 3, col: col + 3 },
+        ];
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function playMove(col) {
+  const position = dropDisk(col);
+  if (!position) return;
+
+  if (isWinningMove(position.targetRow, position.col)) {
+    winner.value = currentPlayer.value;
+    return;
+  }
+
+  currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
 }
 
 /**
@@ -237,8 +341,12 @@ const markerStyle = computed(() => {
           @apply relative cursor-pointer;
 
           .disk-wrapper {
-            @apply absolute inset-0 h-14 w-14 pointer-events-none;
+            @apply relative inset-0 h-14 w-14 pointer-events-none;
             animation: dropAnimation 0.5s ease-out;
+
+            .winner-circle {
+              @apply absolute w-6 h-6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white z-10 pointer-events-none;
+            }
           }
 
           .disk {
