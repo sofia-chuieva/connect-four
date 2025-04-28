@@ -5,39 +5,55 @@
       <PlayerCard icon="player-one-smiley-face.svg" :player="1" />
       <div class="board-wrapper">
         <img src="/images/board.svg" alt="Game Board" />
-
-        <!-- Invisible grid overlay for clicks -->
+        <div class="marker-grid">
+          <div class="marker-wrapper">
+            <transition name="fade">
+              <div
+                v-if="hoverColumn !== null"
+                class="marker"
+                :style="markerStyle"
+              >
+                <img :src="markerSrc" alt="Marker" />
+              </div>
+            </transition>
+          </div>
+          <div
+            v-for="col in cols"
+            :key="`col${col}`"
+            :class="['col', `col${col}`]"
+            @mouseenter="hoverColumn = col - 1"
+            @mouseleave="hoverColumn = null"
+            @click="dropDisk(col - 1)"
+          ></div>
+        </div>
         <div class="cells-grid">
           <div
             v-for="cellIndex in cellIndices"
-            :key="cellIndex"
-            :class="['cell', `cell-${cellIndex}`]"
-            @click="handleCellClick(cellIndex)"
-          ></div>
-        </div>
-
-        <!-- Dropped disks rendered with an animation -->
-        <transition-group name="drop" tag="div" class="disks-grid">
-          <div
-            v-for="disk in droppedDisks"
-            :key="disk.id"
-            class="disk-wrapper drop-animation"
-            :style="{
-              left: diskLeft(disk.column),
-              top: diskTop(disk.row),
-            }"
+            :key="`cell-${cellIndex}`"
+            :class="[
+              'cell',
+              `cell-${cellIndex}`,
+              { filled: getDiskAtCell(cellIndex) },
+            ]"
           >
-            <img
-              :src="
-                disk.player === 1
-                  ? '/images/player-one-disk.svg'
-                  : '/images/player-two-disk.svg'
-              "
-              alt="Disk"
-              class="marker"
-            />
+            <transition name="drop">
+              <div
+                v-if="getDiskAtCell(cellIndex)"
+                class="disk-wrapper drop-animation"
+              >
+                <img
+                  :src="
+                    getDiskAtCell(cellIndex).player === 1
+                      ? '/images/player-one-disk.svg'
+                      : '/images/player-two-disk.svg'
+                  "
+                  alt="Disk"
+                  class="disk"
+                />
+              </div>
+            </transition>
           </div>
-        </transition-group>
+        </div>
         <Timer />
       </div>
       <PlayerCard icon="player-two-smiley-face.svg" :player="2" />
@@ -47,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 // Board and grid configuration
 const boardWidth = 500;
@@ -56,36 +72,47 @@ const rows = 6;
 const cols = 7;
 const totalCells = rows * cols;
 const cellIndices = Array.from({ length: totalCells }, (_, i) => i);
+const hoverColumn = ref(null);
 
-// Define grid spacing values (using 0.8rem ≈ 12.8px; adjust the multiplier if needed)
+// Grid spacing values (using 0.8rem, ~12.8px with 16px = 1rem)
 const remInPx = 16;
-const gridPadding = 0.8 * remInPx; // ≈12.8px padding (left and top)
-const gridGap = 0.8 * remInPx; // ≈12.8px gap
+const gridPadding = 0.8 * remInPx; // about 12.8px of padding
+const gridGap = 0.8 * remInPx; // about 12.8px of gap
 
 // Calculate effective cell dimensions
-const availableWidth = boardWidth - 2 * gridPadding; // subtract left and right padding
-const availableHeight = boardHeight - gridPadding; // subtract top padding (bottom is not padded)
+const availableWidth = boardWidth - 2 * gridPadding;
+const availableHeight = boardHeight - gridPadding; // using top padding only (adjust as needed)
 const cellWidth = (availableWidth - (cols - 1) * gridGap) / cols;
 const cellHeight = (availableHeight - (rows - 1) * gridGap) / rows;
 
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
 
-// Board state is represented as a 2D array of rows × cols (0 means empty)
+const markerSrc = computed(
+  () => `/images/marker-player-${currentPlayer.value}.svg`
+);
+
+// The board state is a 2D array (0 indicates an empty cell)
 const board = ref(
   Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0))
 );
 
-// List to store the dropped disk objects.
+// Array to store dropped disk objects (each having row, column, player, and an id)
 const droppedDisks = ref([]);
 let diskId = 0;
 
 /**
- * Convert a 1D cell index to its column (to find in which column our cell is located)
- * 9 % 7 =  2 => 3 column
+ * Get the column (0-indexed) from a 1D cell index.
  */
 function cellToColumn(cellIndex) {
   return cellIndex % cols;
+}
+
+/**
+ * Get the row (0-indexed) from a 1D cell index.
+ */
+function cellToRow(cellIndex) {
+  return Math.floor(cellIndex / cols);
 }
 
 /**
@@ -93,15 +120,15 @@ function cellToColumn(cellIndex) {
  */
 function lowestEmptyRow(col) {
   for (let row = rows - 1; row >= 0; row--) {
-    if (board.value[row][col] == 0) {
+    if (board.value[row][col] === 0) {
       return row;
     }
   }
-  return -1;
+  return -1; // Column is full
 }
 
 /**
- * Handle cell clicks by determining the column and dropping the disk.
+ * Handles a click on a cell by determining its column and dropping a disk there.
  */
 function handleCellClick(cellIndex) {
   const col = cellToColumn(cellIndex);
@@ -109,32 +136,32 @@ function handleCellClick(cellIndex) {
 }
 
 /**
- * Calculate the left position (in pixels) for a disk based on its column.
- * It takes into account the grid padding and gap.
+ * Calculate the left position (in pixels) for the disk based on its column.
  */
 function diskLeft(col) {
   return gridPadding + col * (cellWidth + gridGap) + "px";
 }
 
 /**
- * Calculate the top position (in pixels) for a disk based on its row.
+ * Calculate the top position (in pixels) for the disk based on its row.
  */
 function diskTop(row) {
   return gridPadding + row * (cellHeight + gridGap) + "px";
 }
 
 /**
- * Drop a disk in the specified column. The disk is created in its final cell position,
- * and a CSS animation (applied via transform) creates the "dropping" effect.
+ * Drop a disk in the specified column. If the column is full, do nothing.
  */
 function dropDisk(col) {
   const targetRow = lowestEmptyRow(col);
-  if (targetRow === null) return; // Column full
+  if (targetRow === -1) {
+    return;
+  }
 
-  // Update board state
+  // Update board state.
   board.value[targetRow][col] = currentPlayer.value;
 
-  // Create the disk with its final row position.
+  // Create the disk object with final cell coordinates.
   const newDisk = {
     id: diskId++,
     column: col,
@@ -147,60 +174,83 @@ function dropDisk(col) {
   // Toggle player turn.
   currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
 }
+
+/**
+ * Returns the disk object if one exists in the cell corresponding to cellIndex.
+ * It computes the cell's row and column and then looks for a disk with matching coordinates.
+ */
+function getDiskAtCell(cellIndex) {
+  const row = cellToRow(cellIndex);
+  const col = cellToColumn(cellIndex);
+  // Find a disk that was dropped in this cell
+  return droppedDisks.value.find(
+    (disk) => disk.row === row && disk.column === col
+  );
+}
+
+/**
+ * Handle hover effect for markers in the column
+ */
+const markerStyle = computed(() => {
+  if (hoverColumn.value === null) return {};
+
+  // grid-area names are col1 … col7
+  return { gridArea: `col${hoverColumn.value + 1}` };
+});
 </script>
 
 <style scoped>
-@import "../assets/css/main.css";
+@reference "../assets/css/main.css";
 
 .container {
-  @apply mx-auto relative z-20 px-10 w-full h-screen flex-col flex items-center justify-center;
-}
-.game-board {
-  @apply flex flex-row gap-20 items-center justify-center mx-auto w-full;
-}
-.board-wrapper {
-  @apply relative w-[500px] h-[420px];
+  @apply relative mx-auto flex h-screen w-full flex-col items-center justify-center px-10 z-20;
+
+  .game-board {
+    @apply mx-auto flex w-full flex-row items-center justify-center gap-20;
+
+    .board-wrapper {
+      @apply relative h-[420px] w-[500px];
+
+      & > img {
+        @apply relative z-[5] pointer-events-none;
+      }
+
+      .marker-grid {
+        @apply absolute inset-0 grid h-[420px] w-[500px] grid-cols-7 gap-[0.8rem] px-[0.8rem] py-0 z-[6];
+
+        .marker-wrapper {
+          @apply absolute -top-16 grid h-12 w-full grid-cols-7 gap-[0.8rem] [grid-template-areas:'col1_col2_col3_col4_col5_col6_col7'] px-[0.8rem] pt-[0.8rem] z-[4];
+
+          .marker {
+            @apply flex justify-center;
+          }
+        }
+
+        .col {
+          @apply cursor-pointer;
+        }
+      }
+
+      .cells-grid {
+        @apply absolute inset-0 grid h-[420px] w-[500px] grid-cols-7 grid-rows-6 gap-[0.8rem] px-[0.8rem] pt-[0.8rem] z-[3];
+
+        .cell {
+          @apply relative cursor-pointer;
+
+          .disk-wrapper {
+            @apply absolute inset-0 h-14 w-14 pointer-events-none;
+            animation: dropAnimation 0.5s ease-out;
+          }
+
+          .disk {
+            @apply h-full w-full;
+          }
+        }
+      }
+    }
+  }
 }
 
-/* Grid overlay allowing column clicks */
-.cells-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: 0.8rem;
-  padding: 0.8rem 0.8rem 0;
-  width: 500px;
-  height: 420px;
-}
-
-.cell {
-  cursor: pointer;
-}
-
-/* Disk wrapper: absolutely positioned to overlay on board */
-.disk-wrapper {
-  position: absolute;
-  z-index: -10;
-  pointer-events: none;
-  width: calc(
-    (100% - 2 * 0.8rem - 6 * 0.8rem) / 7
-  ); /* roughly equal to cellWidth */
-  height: calc(
-    (100% - 0.8rem - 5 * 0.8rem) / 6
-  ); /* roughly equal to cellHeight */
-}
-
-/* Ensure disk image fills its container */
-.disk-wrapper .marker {
-  width: 3.5rem;
-  height: 3.5rem;
-  display: block;
-}
-
-/* Drop animation via transform */
 @keyframes dropAnimation {
   from {
     transform: translateY(-50px);
@@ -210,21 +260,29 @@ function dropDisk(col) {
   }
 }
 
-.drop-animation {
-  animation: dropAnimation 0.5s ease-out;
+.fade-enter-from,
+.fade-leave-to {
+  @apply opacity-0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  @apply opacity-100;
+}
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-opacity duration-150 ease-in-out;
 }
 
-/* Optional transition-group classes for opacity if needed */
 .drop-enter-from,
 .drop-leave-to {
-  opacity: 0;
+  @apply opacity-0;
 }
 .drop-enter-active,
 .drop-leave-active {
-  transition: opacity 0.5s ease;
+  @apply transition-opacity duration-500 ease-in-out;
 }
 
 .bg-footer {
-  @apply w-full bottom-0 bg-dark-blue absolute h-[calc(50%-205px)] rounded-t-[60px];
+  @apply absolute bottom-0 h-[calc(50%-205px)] w-full rounded-t-[60px] bg-dark-blue;
 }
 </style>
