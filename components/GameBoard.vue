@@ -13,7 +13,10 @@
                 class="marker"
                 :style="markerStyle"
               >
-                <img :src="markerSrc" alt="Marker" />
+                <img
+                  :src="`/images/marker-player-${currentPlayer}.svg`"
+                  alt="Marker"
+                />
               </div>
             </transition>
           </div>
@@ -87,10 +90,6 @@ const cellHeight = (availableHeight - (rows - 1) * gridGap) / rows;
 
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
-
-const markerSrc = computed(
-  () => `/images/marker-player-${currentPlayer.value}.svg`
-);
 
 // The board state is a 2D array (0 indicates an empty cell)
 const board = ref(
