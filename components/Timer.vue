@@ -11,7 +11,7 @@
 <style scoped>
 @reference "../assets/css/main.css";
 .timer {
-  @apply absolute left-1/2 translate-x-[-50%] text-center -bottom-[35%];
+  @apply absolute left-1/2 z-10 translate-x-[-50%] text-center -bottom-[35%];
 
   .timer-wrapper {
     @apply absolute w-full top-[30%] left-0;
