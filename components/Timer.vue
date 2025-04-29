@@ -2,7 +2,7 @@
   <div class="timer">
     <div class="timer-wrapper">
       <p class="font-bold text-white text-base">PLAYER 1’S TURN</p>
-      <h1 class="text-white">10s</h1>
+      <h1 class="text-white">{{ timer }}</h1>
     </div>
     <img src="/images/timer.svg" alt="Timer" />
   </div>
@@ -18,3 +18,12 @@
   }
 }
 </style>
+
+<script setup>
+const props = defineProps({
+  timer: {
+    type: Number,
+    required: true,
+  },
+});
+</script>

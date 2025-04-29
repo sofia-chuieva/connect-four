@@ -61,7 +61,7 @@
             </transition>
           </div>
         </div>
-        <Timer />
+        <Timer :timer="initialTimer" />
       </div>
       <PlayerCard icon="player-two-smiley-face.svg" :player="2" />
     </div>
@@ -70,8 +70,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 // Board and grid configuration
 const boardWidth = 500;
 const boardHeight = 420;
@@ -82,6 +81,7 @@ const cellIndices = Array.from({ length: totalCells }, (_, i) => i);
 const hoverColumn = ref(null);
 const winner = ref(null);
 const winningCells = ref([]);
+const initialTimer = ref(30);
 // Grid spacing values (using 0.8rem, ~12.8px with 16px = 1rem)
 const remInPx = 16;
 const gridPadding = 0.8 * remInPx; // about 12.8px of padding
@@ -105,23 +105,33 @@ const board = ref(
 const droppedDisks = ref([]);
 let diskId = 0;
 
-/**
- * Get the column (0-indexed) from a 1D cell index.
- */
+// timer
+let intervalId;
+onMounted(() => {
+  intervalId = setInterval(() => {
+    if (initialTimer.value > 0) {
+      initialTimer.value--;
+    } else {
+      clearInterval(intervalId);
+    }
+  }, 1000);
+});
+
+onBeforeUnmount(() => {
+  if (intervalId) clearInterval(intervalId);
+});
+
+// Get the column (0-indexed) from a 1D cell index.
 function cellToColumn(cellIndex) {
   return cellIndex % cols;
 }
 
-/**
- * Get the row (0-indexed) from a 1D cell index.
- */
+// Get the row (0-indexed) from a 1D cell index.
 function cellToRow(cellIndex) {
   return Math.floor(cellIndex / cols);
 }
 
-/**
- * Find the lowest empty row in the specified column.
- */
+// Find the lowest empty row in the specified column.
 function lowestEmptyRow(col) {
   for (let row = rows - 1; row >= 0; row--) {
     if (board.value[row][col] === 0) {
@@ -131,31 +141,23 @@ function lowestEmptyRow(col) {
   return -1; // Column is full
 }
 
-/**
- * Handles a click on a cell by determining its column and dropping a disk there.
- */
+// Handles a click on a cell by determining its column and  a disk there.
 function handleCellClick(cellIndex) {
   const col = cellToColumn(cellIndex);
   dropDisk(col);
 }
 
-/**
- * Calculate the left position (in pixels) for the disk based on its column.
- */
+// Calculate the left position (in pixels) for the disk based on its column.
 function diskLeft(col) {
   return gridPadding + col * (cellWidth + gridGap) + "px";
 }
 
-/**
- * Calculate the top position (in pixels) for the disk based on its row.
- */
+// Calculate the top position (in pixels) for the disk based on its row.
 function diskTop(row) {
   return gridPadding + row * (cellHeight + gridGap) + "px";
 }
 
-/**
- * Drop a disk in the specified column. If the column is full, do nothing.
- */
+// Drop a disk in the specified column. If the column is full, do nothing.
 function dropDisk(col) {
   const targetRow = lowestEmptyRow(col);
   if (targetRow === -1) return;
@@ -291,9 +293,7 @@ function playMove(col) {
   currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
 }
 
-/**
- * Handle hover effect for markers in the column
- */
+// Handle hover effect for markers in the column
 const markerStyle = computed(() => {
   if (hoverColumn.value === null) return {};
 
