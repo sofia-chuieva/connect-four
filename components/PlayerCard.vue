@@ -3,7 +3,7 @@
     <div class="player">
       <img :src="getImageUrl()" alt="" />
       <p class="uppercase">Player {{ player }}</p>
-      <h1 class="pt-4 pb-10">5</h1>
+      <h1 class="pt-4 pb-10">{{ score }}</h1>
     </div>
     <div class="player-bg"></div>
   </div>
@@ -32,6 +32,7 @@
 const props = defineProps({
   icon: String,
   player: Number,
+  score: Number,
 });
 
 function getImageUrl() {

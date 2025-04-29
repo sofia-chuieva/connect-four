@@ -2,10 +2,14 @@
   <div class="container">
     <Header />
     <div class="game-board">
-      <PlayerCard icon="player-one-smiley-face.svg" :player="1" />
+      <PlayerCard
+        icon="player-one-smiley-face.svg"
+        :player="1"
+        :score="playerScore"
+      />
       <div class="board-wrapper">
         <img src="/images/board.svg" alt="Game Board" />
-        <div class="marker-grid">
+        <div class="marker-grid" v-show="!winner">
           <div class="marker-wrapper">
             <transition name="fade">
               <div
@@ -63,7 +67,11 @@
         </div>
         <Timer :timer="initialTimer" />
       </div>
-      <PlayerCard icon="player-two-smiley-face.svg" :player="2" />
+      <PlayerCard
+        icon="player-two-smiley-face.svg"
+        :player="2"
+        :score="cpuScore"
+      />
     </div>
   </div>
   <div class="bg-footer"></div>
@@ -82,6 +90,8 @@ const hoverColumn = ref(null);
 const winner = ref(null);
 const winningCells = ref([]);
 const initialTimer = ref(30);
+const playerScore = ref(0);
+const cpuScore = ref(0);
 // Grid spacing values (using 0.8rem, ~12.8px with 16px = 1rem)
 const remInPx = 16;
 const gridPadding = 0.8 * remInPx; // about 12.8px of padding
@@ -282,11 +292,18 @@ function isWinningMove(targetRow, col) {
 }
 
 function playMove(col) {
+  if (winner.value) return;
   const position = dropDisk(col);
   if (!position) return;
 
   if (isWinningMove(position.targetRow, position.col)) {
     winner.value = currentPlayer.value;
+    clearInterval(intervalId);
+    if (winner.value === 1) {
+      playerScore.value += 1;
+    } else {
+      cpuScore.value += 1;
+    }
     return;
   }
 
