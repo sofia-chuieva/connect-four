@@ -4,7 +4,7 @@
     <div class="game-board">
       <PlayerCard
         icon="player-one-smiley-face.svg"
-        :player="1"
+        player="You"
         :score="playerScore"
       />
       <div class="board-wrapper">
@@ -65,11 +65,11 @@
             </transition>
           </div>
         </div>
-        <Timer :timer="initialTimer" />
+        <Timer :timer="initialTimer" :currentPlayer="currentPlayer" />
       </div>
       <PlayerCard
         icon="player-two-smiley-face.svg"
-        :player="2"
+        player="CPU"
         :score="cpuScore"
       />
     </div>
@@ -117,7 +117,12 @@ let diskId = 0;
 
 // timer
 let intervalId;
-onMounted(() => {
+
+// timer for each turn
+function restartTimer() {
+  clearInterval(intervalId);
+
+  initialTimer.value = 30;
   intervalId = setInterval(() => {
     if (initialTimer.value > 0) {
       initialTimer.value--;
@@ -125,10 +130,10 @@ onMounted(() => {
       clearInterval(intervalId);
     }
   }, 1000);
-});
+}
 
-onBeforeUnmount(() => {
-  if (intervalId) clearInterval(intervalId);
+onMounted(() => {
+  restartTimer();
 });
 
 // Get the column (0-indexed) from a 1D cell index.
@@ -308,6 +313,7 @@ function playMove(col) {
   }
 
   currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
+  restartTimer();
 }
 
 // Handle hover effect for markers in the column

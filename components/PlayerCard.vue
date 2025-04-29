@@ -2,7 +2,7 @@
   <div class="player-wrapper">
     <div class="player">
       <img :src="getImageUrl()" alt="" />
-      <p class="uppercase">Player {{ player }}</p>
+      <p class="uppercase">{{ player }}</p>
       <h1 class="pt-4 pb-10">{{ score }}</h1>
     </div>
     <div class="player-bg"></div>
@@ -15,7 +15,7 @@
   @apply relative;
 
   .player {
-    @apply flex flex-col relative z-20 bg-white rounded-4xl border-[3px] border-black pt-10 px-6 text-center;
+    @apply flex flex-col w-32 relative z-20 bg-white rounded-4xl border-[3px] border-black pt-10 px-6 text-center;
 
     img {
       @apply absolute -top-[18%] left-1/2 -translate-x-1/2;
@@ -31,7 +31,7 @@
 <script setup>
 const props = defineProps({
   icon: String,
-  player: Number,
+  player: String,
   score: Number,
 });
 

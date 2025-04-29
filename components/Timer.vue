@@ -1,10 +1,17 @@
 <template>
   <div class="timer">
-    <div class="timer-wrapper">
-      <p class="font-bold text-white text-base">PLAYER 1’S TURN</p>
-      <h1 class="text-white">{{ timer }}</h1>
+    <div
+      :class="[
+        'timer-wrapper',
+        currentPlayer === 1 ? 'text-white' : 'text-black',
+      ]"
+    >
+      <p>{{ currentPlayer === 1 ? "Your Turn" : "CPU's Turn" }}</p>
+      <h1>
+        {{ timer }}
+      </h1>
     </div>
-    <img src="/images/timer.svg" alt="Timer" />
+    <img :src="`/images/timer-${currentPlayer}.svg`" alt="Timer" />
   </div>
 </template>
 
@@ -15,6 +22,10 @@
 
   .timer-wrapper {
     @apply absolute w-full top-[30%] left-0;
+
+    p {
+      @apply font-bold text-base uppercase pb-0.5;
+    }
   }
 }
 </style>
@@ -22,6 +33,10 @@
 <script setup>
 const props = defineProps({
   timer: {
+    type: Number,
+    required: true,
+  },
+  currentPlayer: {
     type: Number,
     required: true,
   },
