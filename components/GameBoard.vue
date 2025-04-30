@@ -156,22 +156,6 @@ function lowestEmptyRow(col) {
   return -1; // Column is full
 }
 
-// Handles a click on a cell by determining its column and  a disk there.
-function handleCellClick(cellIndex) {
-  const col = cellToColumn(cellIndex);
-  dropDisk(col);
-}
-
-// Calculate the left position (in pixels) for the disk based on its column.
-function diskLeft(col) {
-  return gridPadding + col * (cellWidth + gridGap) + "px";
-}
-
-// Calculate the top position (in pixels) for the disk based on its row.
-function diskTop(row) {
-  return gridPadding + row * (cellHeight + gridGap) + "px";
-}
-
 // Drop a disk in the specified column. If the column is full, do nothing.
 function dropDisk(col) {
   const targetRow = lowestEmptyRow(col);
@@ -316,6 +300,9 @@ function playMove(col) {
   restartTimer();
 }
 
+function minimax() {
+  let min = [null, 99999];
+}
 // Handle hover effect for markers in the column
 const markerStyle = computed(() => {
   if (hoverColumn.value === null) return {};
