@@ -78,12 +78,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted } from "vue";
 // Board and grid configuration
 const boardWidth = 500;
 const boardHeight = 420;
 const rows = 6;
 const cols = 7;
+const windowLength = 4;
 const totalCells = rows * cols;
 const cellIndices = Array.from({ length: totalCells }, (_, i) => i);
 const hoverColumn = ref(null);
@@ -92,16 +93,6 @@ const winningCells = ref([]);
 const initialTimer = ref(30);
 const playerScore = ref(0);
 const cpuScore = ref(0);
-// Grid spacing values (using 0.8rem, ~12.8px with 16px = 1rem)
-const remInPx = 16;
-const gridPadding = 0.8 * remInPx; // about 12.8px of padding
-const gridGap = 0.8 * remInPx; // about 12.8px of gap
-
-// Calculate effective cell dimensions
-const availableWidth = boardWidth - 2 * gridPadding;
-const availableHeight = boardHeight - gridPadding; // using top padding only (adjust as needed)
-const cellWidth = (availableWidth - (cols - 1) * gridGap) / cols;
-const cellHeight = (availableHeight - (rows - 1) * gridGap) / rows;
 
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
@@ -147,18 +138,19 @@ function cellToRow(cellIndex) {
 }
 
 // Find the lowest empty row in the specified column.
-function lowestEmptyRow(col) {
+function lowestEmptyRow(gridOrRef, col) {
+  // Normalize to the raw grid
+  const grid = Array.isArray(gridOrRef) ? gridOrRef : gridOrRef.value;
+
   for (let row = rows - 1; row >= 0; row--) {
-    if (board.value[row][col] === 0) {
-      return row;
-    }
+    if (grid[row][col] === 0) return row;
   }
-  return -1; // Column is full
+  return -1;
 }
 
 // Drop a disk in the specified column. If the column is full, do nothing.
 function dropDisk(col) {
-  const targetRow = lowestEmptyRow(col);
+  const targetRow = lowestEmptyRow(board.value, col);
   if (targetRow === -1) return;
 
   // Update board state.
@@ -197,18 +189,99 @@ function isWinningCell(cellIndex) {
   );
 }
 
-function isWinningMove(targetRow, col) {
-  let player = board.value[targetRow][col];
-  winningCells.value = [];
+function scorePosition(board, player) {
+  let score = 0;
+
+  // Score centre column
+  const centreArray = board.map((row) => Number(row[Math.floor(cols / 2)]));
+  const centreCount = centreArray.filter((cell) => cell === player).length;
+  score += centreCount * 3;
 
   // vertical
+  for (let col = 0; col < cols; col++) {
+    const colArray = board.map((row) => Number(row[col]));
+    for (let row = 0; row < rows - 3; row++) {
+      const window = colArray.slice(row, row + windowLength);
+      score += evaluateWindow(window, player);
+    }
+  }
+
+  // horizontal
+  for (let row = 0; row < rows; row++) {
+    const rowArray = board[row].map(Number);
+    for (let col = 0; col < cols - 3; col++) {
+      const window = rowArray.slice(col, col + windowLength);
+      score += evaluateWindow(window, player);
+    }
+  }
+  // diag ↘
+  for (let row = 0; row < rows - 3; row++) {
+    for (let col = 0; col < cols - 3; col++) {
+      const window = Array.from(
+        { length: windowLength },
+        (_, i) => board[row + i][col + i]
+      );
+      score += evaluateWindow(window, player);
+    }
+  }
+  // diag ↙
+  for (let row = 0; row < rows - 3; row++) {
+    for (let col = 0; col < cols - 3; col++) {
+      const window = Array.from(
+        { length: windowLength },
+        (_, i) => board[row + 3 - i][col + i]
+      );
+      score += evaluateWindow(window, player);
+    }
+  }
+  return score;
+}
+
+function evaluateWindow(window, player) {
+  let score = 0;
+
+  let oppositePiece = 1;
+  if (player == 1) {
+    oppositePiece = 2;
+  }
+
+  const cpuPieces = window.filter((v) => v === 2).length;
+  const playerPieces = window.filter((v) => v === 1).length;
+  const empties = 4 - cpuPieces - playerPieces;
+
+  if (cpuPieces == 4) {
+    score += 100;
+  } else if (cpuPieces == 3 && empties == 1) {
+    score += 5;
+  } else if (cpuPieces == 2 && empties == 2) {
+    score += 2;
+  }
+
+  if (playerPieces == 3 && empties == 1) {
+    score -= 4;
+  }
+
+  return score;
+}
+
+/** Convenience: return 0 | 1 | 2 for nobody / human / CPU */
+function winnerOnGrid(board) {
+  if (isWinningMove(board, 1)) return 1;
+  if (isWinningMove(board, 2)) return 2;
+  return 0;
+}
+
+function isWinningMove(board, player) {
+  winningCells.value = [];
+
+  //   // vertical
   for (let row = 0; row < rows - 3; row++) {
     for (let col = 0; col < cols; col++) {
       if (
-        board.value[row][col] === player &&
-        board.value[row + 1][col] === player &&
-        board.value[row + 2][col] === player &&
-        board.value[row + 3][col] === player
+        board[row][col] === player &&
+        board[row + 1][col] === player &&
+        board[row + 2][col] === player &&
+        board[row + 3][col] === player
       ) {
         winningCells.value = [
           { row, col },
@@ -220,14 +293,14 @@ function isWinningMove(targetRow, col) {
       }
     }
   }
-  // horizontal
+  //   // horizontal
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col <= cols - 4; col++) {
       if (
-        board.value[row][col] === player &&
-        board.value[row][col + 1] === player &&
-        board.value[row][col + 2] === player &&
-        board.value[row][col + 3] === player
+        board[row][col] === player &&
+        board[row][col + 1] === player &&
+        board[row][col + 2] === player &&
+        board[row][col + 3] === player
       ) {
         winningCells.value = [
           { row, col },
@@ -243,10 +316,10 @@ function isWinningMove(targetRow, col) {
   for (let row = 0; row <= rows - 4; row++) {
     for (let col = 0; col <= cols - 4; col++) {
       if (
-        board.value[row][col] === player &&
-        board.value[row + 1][col + 1] === player &&
-        board.value[row + 2][col + 2] === player &&
-        board.value[row + 3][col + 3] === player
+        board[row][col] === player &&
+        board[row + 1][col + 1] === player &&
+        board[row + 2][col + 2] === player &&
+        board[row + 3][col + 3] === player
       ) {
         winningCells.value = [
           { row, col },
@@ -262,10 +335,10 @@ function isWinningMove(targetRow, col) {
   for (let row = 3; row < rows; row++) {
     for (let col = 0; col <= cols - 4; col++) {
       if (
-        board.value[row][col] === player &&
-        board.value[row - 1][col + 1] === player &&
-        board.value[row - 2][col + 2] === player &&
-        board.value[row - 3][col + 3] === player
+        board[row][col] === player &&
+        board[row - 1][col + 1] === player &&
+        board[row - 2][col + 2] === player &&
+        board[row - 3][col + 3] === player
       ) {
         winningCells.value = [
           { row, col },
@@ -280,12 +353,83 @@ function isWinningMove(targetRow, col) {
   return false;
 }
 
+function evaluateBoard(board) {
+  const cpuScore = scorePosition(board, 2);
+  const playerScore = scorePosition(board, 1);
+  return cpuScore - playerScore;
+}
+
+function isBoardFull(b) {
+  return b.every((row) => row.every((cell) => cell !== 0));
+}
+
+function minimax(board, alpha, beta, maximize, depth) {
+  const win = winnerOnGrid(board);
+  if (win === 1) return [-99999, null];
+  if (win === 2) return [99999, null];
+  if (depth === 0 || isBoardFull(board)) {
+    return [evaluateBoard(board), null];
+  }
+  let bestVal;
+  if (maximize) {
+    bestVal = [-99999, null];
+    for (let col = 0; col < cols; col++) {
+      const newBoard = cloneBoard(board);
+
+      const row = lowestEmptyRow(newBoard, col);
+      if (row === -1) continue;
+
+      newBoard[row][col] = 2;
+      let [value] = minimax(newBoard, alpha, beta, false, depth - 1);
+      if (value > bestVal[0]) bestVal = [value, col];
+
+      alpha = Math.max(alpha, bestVal[0]);
+      if (alpha >= beta) break;
+    }
+    return bestVal;
+  } else {
+    bestVal = [99999, null];
+    for (let col = 0; col < cols; col++) {
+      const newBoard = cloneBoard(board);
+
+      const row = lowestEmptyRow(newBoard, col);
+      if (row === -1) continue;
+
+      newBoard[row][col] = 1;
+      let [value] = minimax(newBoard, alpha, beta, true, depth - 1);
+
+      if (value < bestVal[0]) bestVal = [value, col];
+      beta = Math.min(beta, bestVal[0]);
+      if (alpha >= beta) break;
+    }
+  }
+  return bestVal;
+}
+
+function cloneBoard(board) {
+  return board.map((row) => [...row]);
+}
+
+function cpuMove() {
+  setTimeout(() => {
+    const depth = 8;
+    const [, bestCol] = minimax(
+      cloneBoard(board.value),
+      -Infinity,
+      Infinity,
+      true,
+      depth
+    );
+    if (bestCol !== null) playMove(bestCol);
+  }, 1200);
+}
+
 function playMove(col) {
   if (winner.value) return;
   const position = dropDisk(col);
   if (!position) return;
 
-  if (isWinningMove(position.targetRow, position.col)) {
+  if (isWinningMove(board.value, currentPlayer.value)) {
     winner.value = currentPlayer.value;
     clearInterval(intervalId);
     if (winner.value === 1) {
@@ -297,12 +441,12 @@ function playMove(col) {
   }
 
   currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
+  if (currentPlayer.value === 2 && !winner.value) {
+    cpuMove();
+  }
   restartTimer();
 }
 
-function minimax() {
-  let min = [null, 99999];
-}
 // Handle hover effect for markers in the column
 const markerStyle = computed(() => {
   if (hoverColumn.value === null) return {};
