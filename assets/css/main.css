@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 @import "tailwindcss";
+
 @layer base {
   * {
     font-family: "Space Grotesk", sans-serif;
@@ -25,7 +26,7 @@
 @theme {
   --color-dark-blue: #194065;
   --color-light-blue: #1f517f;
-  --color-red: #ea2f55;
+  --color-red: #d63958;
   --color-orange: #fe8835;
   --breakpoint-3xl: 120rem;
 }

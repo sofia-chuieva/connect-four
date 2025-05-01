@@ -10,24 +10,10 @@
         <div class="buttons">
           <div class="btn-wrapper">
             <button @click="goToGame" class="player-vs-cpu-btn">
-              <p>Play vs CPU</p>
-              <img
-                src="/images/player-vs-cpu.svg"
-                alt="player-vs-cpu"
-              />
+              <p>Player vs CPU</p>
+              <img src="/images/player-vs-cpu.svg" alt="player-vs-cpu" />
             </button>
             <div class="player-vs-cpu-bg"></div>
-          </div>
-
-          <div class="btn-wrapper">
-            <button class="player-vs-player-btn">
-              <p>Play vs Player</p>
-              <img
-                src="/images/player-vs-player.svg"
-                alt="player-vs-player"
-              />
-            </button>
-            <div class="player-vs-player-bg"></div>
           </div>
 
           <div class="btn-wrapper">
@@ -86,7 +72,7 @@
     }
 
     .menu-bg {
-      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-6;
+      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-4;
     }
   }
 }
