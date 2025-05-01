@@ -192,11 +192,6 @@ function isWinningCell(cellIndex) {
 function scorePosition(board, player) {
   let score = 0;
 
-  // Score centre column
-  const centreArray = board.map((row) => Number(row[Math.floor(cols / 2)]));
-  const centreCount = centreArray.filter((cell) => cell === player).length;
-  score += centreCount * 3;
-
   // vertical
   for (let col = 0; col < cols; col++) {
     const colArray = board.map((row) => Number(row[col]));
@@ -412,14 +407,29 @@ function cloneBoard(board) {
 
 function cpuMove() {
   setTimeout(() => {
-    const depth = 8;
-    const [, bestCol] = minimax(
-      cloneBoard(board.value),
-      -Infinity,
-      Infinity,
-      true,
-      depth
-    );
+    const totalMoves = droppedDisks.value.length;
+    let bestCol;
+
+    if (totalMoves === 1) {
+      const legalCols = [];
+      for (let col = 0; col < cols; col++) {
+        if (lowestEmptyRow(board.value, col) !== -1) {
+          legalCols.push(col);
+        }
+      }
+      bestCol = legalCols[Math.floor(Math.random() * legalCols.length)];
+    } else {
+      const depth = 8;
+      const [, col] = minimax(
+        cloneBoard(board.value),
+        -Infinity,
+        Infinity,
+        true,
+        depth
+      );
+      bestCol = col;
+    }
+
     if (bestCol !== null) playMove(bestCol);
   }, 1200);
 }
