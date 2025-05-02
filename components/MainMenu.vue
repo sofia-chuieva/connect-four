@@ -9,13 +9,12 @@
         />
         <div class="buttons">
           <div class="btn-wrapper">
-            <button @click="goToGame" class="player-vs-cpu-btn">
+            <button @click="toggleModal" class="player-vs-cpu-btn">
               <p>Player vs CPU</p>
               <img src="/images/player-vs-cpu.svg" alt="player-vs-cpu" />
             </button>
             <div class="player-vs-cpu-bg"></div>
           </div>
-
           <div class="btn-wrapper">
             <button @click="goToRules" class="rules-btn">
               <p>Game Rules</p>
@@ -24,10 +23,10 @@
           </div>
         </div>
       </div>
-
       <div class="menu-bg"></div>
     </div>
   </div>
+  <MenuModal v-if="showModal" />
 </template>
 
 <style scoped>
@@ -81,12 +80,16 @@
 <script setup>
 import { useRouter } from "vue-router";
 const router = useRouter();
-
+let showModal = ref(false);
 function goToGame() {
   router.push({ path: "/game" });
 }
 
 function goToRules() {
   router.push({ path: "/rules" });
+}
+
+function toggleModal() {
+  showModal.value = !showModal.value;
 }
 </script>

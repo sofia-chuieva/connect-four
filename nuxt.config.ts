@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: false },
+
   app: {
     head: {
       link: [
@@ -15,8 +16,12 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   css: ["~/assets/css/main.css"],
+
   vite: {
     plugins: [tailwindcss(), svgLoader()],
   },
+
+  modules: ["@pinia/nuxt"],
 });

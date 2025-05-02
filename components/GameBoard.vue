@@ -79,7 +79,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-// Board and grid configuration
+import { useGameStore } from "~/stores/game";
+const game = useGameStore();
+const depth = computed(() => game.depth);
+console.log(depth.value);
 const boardWidth = 500;
 const boardHeight = 420;
 const rows = 6;
@@ -106,7 +109,6 @@ const board = ref(
 const droppedDisks = ref([]);
 let diskId = 0;
 
-// timer
 let intervalId;
 
 // timer for each turn
@@ -419,13 +421,12 @@ function cpuMove() {
       }
       bestCol = legalCols[Math.floor(Math.random() * legalCols.length)];
     } else {
-      const depth = 8;
       const [, col] = minimax(
         cloneBoard(board.value),
         -Infinity,
         Infinity,
         true,
-        depth
+        depth.value
       );
       bestCol = col;
     }
@@ -440,6 +441,10 @@ function playMove(col) {
   if (!position) return;
 
   if (isWinningMove(board.value, currentPlayer.value)) {
+    console.log(
+      `Player ${currentPlayer.value} wins! Cells:`,
+      winningCells.value
+    );
     winner.value = currentPlayer.value;
     clearInterval(intervalId);
     if (winner.value === 1) {
