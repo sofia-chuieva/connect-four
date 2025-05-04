@@ -1,12 +1,19 @@
 <template>
   <div class="container">
     <Header @toggle-pause="togglePause" />
-    <div class="game-board">
+    <div class="player-cards-wrapper">
       <PlayerCard
         icon="player-one-smiley-face.svg"
         player="You"
         :score="playerScore"
       />
+      <PlayerCard
+        icon="player-two-smiley-face.svg"
+        player="CPU"
+        :score="cpuScore"
+      />
+    </div>
+    <div class="game-board">
       <div class="board-wrapper">
         <img src="/images/board.svg" alt="Game Board" />
         <div class="marker-grid" v-show="!winner">
@@ -67,11 +74,6 @@
         </div>
         <Timer :timer="initialTimer" :currentPlayer="currentPlayer" />
       </div>
-      <PlayerCard
-        icon="player-two-smiley-face.svg"
-        player="CPU"
-        :score="cpuScore"
-      />
     </div>
   </div>
   <WinnerModal v-if="showWinnerModal" :winner="winner" @restart="restartGame" />
@@ -536,6 +538,10 @@ const markerStyle = computed(() => {
 
 .container {
   @apply relative mx-auto flex h-screen w-full flex-col items-center justify-center px-10 z-20;
+
+  .player-cards-wrapper {
+    @apply absolute flex w-280 justify-between items-center;
+  }
 
   .game-board {
     @apply mx-auto flex w-full flex-row items-center justify-center gap-20;
