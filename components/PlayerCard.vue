@@ -23,7 +23,7 @@
     }
 
     img {
-      @apply absolute -translate-x-1/2 w-12 lg:w-fit;
+      @apply absolute -translate-x-1/2 w-10 md:w-12 lg:w-fit;
     }
 
     &#player-1 {
