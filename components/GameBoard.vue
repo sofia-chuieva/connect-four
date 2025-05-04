@@ -74,6 +74,7 @@
       />
     </div>
   </div>
+  <WinnerModal v-if="showWinnerModal" :winner="winner" @restart="restartGame" />
   <div class="bg-footer"></div>
 </template>
 
@@ -96,6 +97,7 @@ const winningCells = ref([]);
 const initialTimer = ref(30);
 const playerScore = ref(0);
 const cpuScore = ref(0);
+const showWinnerModal = ref(false);
 
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
@@ -128,6 +130,25 @@ function restartTimer() {
 onMounted(() => {
   restartTimer();
 });
+
+function restartGame() {
+  // 1. Reset the raw board grid
+  board.value = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => 0)
+  );
+
+  // 2. Clear any dropped disks & winning highlight
+  droppedDisks.value = [];
+  winningCells.value = [];
+
+  // 3. Clear the winner/modal
+  winner.value = null;
+  showWinnerModal.value = false;
+
+  // 4. Reset the turn & timer
+  currentPlayer.value = 1;
+  restartTimer();
+}
 
 // Get the column (0-indexed) from a 1D cell index.
 function cellToColumn(cellIndex) {
@@ -446,6 +467,7 @@ function playMove(col) {
       winningCells.value
     );
     winner.value = currentPlayer.value;
+    showWinnerModal.value = !showWinnerModal.value;
     clearInterval(intervalId);
     if (winner.value === 1) {
       playerScore.value += 1;
