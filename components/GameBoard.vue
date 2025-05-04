@@ -95,9 +95,6 @@ import { useGameStore } from "~/stores/game";
 const router = useRouter();
 const game = useGameStore();
 const depth = computed(() => game.depth);
-console.log(depth.value);
-const boardWidth = 500;
-const boardHeight = 420;
 const rows = 6;
 const cols = 7;
 const windowLength = 4;
@@ -111,7 +108,6 @@ const playerScore = ref(0);
 const cpuScore = ref(0);
 const showWinnerModal = ref(false);
 const showPauseModal = ref(false);
-
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
 
@@ -542,21 +538,21 @@ const markerStyle = computed(() => {
   @apply relative mx-auto flex h-screen w-full flex-col items-center justify-center px-10 z-20;
 
   .player-cards-wrapper {
-    @apply lg:absolute w-125 lg:w-220 gap-12 pb-8 lg:pb-0 lg:gap-0 flex justify-between items-center;
+    @apply lg:absolute w-82 md:w-125 lg:w-220 gap-12 pb-8 lg:pb-0 lg:gap-0 flex justify-between items-center;
   }
 
   .game-board {
     @apply mx-auto flex w-full flex-row items-center justify-center gap-20;
 
     .board-wrapper {
-      @apply relative h-[420px] w-[500px];
+      @apply relative h-[310px] w-[335px] md:h-[420px] md:w-[500px];
 
       & > img {
         @apply relative z-[5] pointer-events-none;
       }
 
       .marker-grid {
-        @apply absolute inset-0 grid h-[420px] w-[500px] grid-cols-7 gap-[0.8rem] px-[0.8rem] py-0 z-[6];
+        @apply absolute inset-0 grid h-[310px] w-[335px] md:h-[420px] md:w-[500px] grid-cols-7 gap-[0.8rem] px-[0.8rem] py-0 z-[6];
 
         .marker-wrapper {
           @apply absolute -top-16 hidden lg:grid h-12 w-full grid-cols-7 gap-[0.8rem] [grid-template-areas:'col1_col2_col3_col4_col5_col6_col7'] px-[0.8rem] pt-[0.8rem] z-[4];
@@ -572,7 +568,7 @@ const markerStyle = computed(() => {
       }
 
       .cells-grid {
-        @apply absolute inset-0 grid h-[420px] w-[500px] grid-cols-7 grid-rows-6 gap-[0.8rem] px-[0.8rem] pt-[0.8rem] z-[3];
+        @apply absolute inset-0 grid h-[310px] w-[335px] md:h-[420px] md:w-[500px] grid-cols-7 grid-rows-6 gap-[0.8rem] px-[0.8rem] pt-[0.8rem] z-[3];
 
         .cell {
           @apply relative cursor-pointer;
