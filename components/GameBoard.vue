@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header />
+    <Header @toggle-pause="togglePause" />
     <div class="game-board">
       <PlayerCard
         icon="player-one-smiley-face.svg"
@@ -75,12 +75,20 @@
     </div>
   </div>
   <WinnerModal v-if="showWinnerModal" :winner="winner" @restart="restartGame" />
+  <PauseModal
+    v-if="showPauseModal"
+    @restart="restartGame"
+    @continue="continueGame"
+    @quit="quitGame"
+  />
   <div class="bg-footer"></div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useGameStore } from "~/stores/game";
+const router = useRouter();
 const game = useGameStore();
 const depth = computed(() => game.depth);
 console.log(depth.value);
@@ -98,6 +106,7 @@ const initialTimer = ref(30);
 const playerScore = ref(0);
 const cpuScore = ref(0);
 const showWinnerModal = ref(false);
+const showPauseModal = ref(false);
 
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
@@ -113,11 +122,7 @@ let diskId = 0;
 
 let intervalId;
 
-// timer for each turn
-function restartTimer() {
-  clearInterval(intervalId);
-
-  initialTimer.value = 30;
+function startTimer() {
   intervalId = setInterval(() => {
     if (initialTimer.value > 0) {
       initialTimer.value--;
@@ -126,28 +131,61 @@ function restartTimer() {
     }
   }, 1000);
 }
+// timer for each turn
+function restartTimer() {
+  clearInterval(intervalId);
+  initialTimer.value = 30;
+  startTimer();
+}
+
+function resumeTimer() {
+  clearInterval(intervalId);
+  startTimer();
+}
 
 onMounted(() => {
   restartTimer();
 });
 
+onUnmounted(() => {
+  clearInterval(intervalId); // avoid a stray interval if the page changes
+});
+
+function togglePause() {
+  showPauseModal.value = !showPauseModal.value;
+  if (showPauseModal.value) {
+    clearInterval(intervalId); // pause timer
+  } else {
+    resumeTimer(); // resume
+  }
+}
+
 function restartGame() {
-  // 1. Reset the raw board grid
+  showPauseModal.value = false;
+
   board.value = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => 0)
   );
 
-  // 2. Clear any dropped disks & winning highlight
   droppedDisks.value = [];
   winningCells.value = [];
 
-  // 3. Clear the winner/modal
   winner.value = null;
   showWinnerModal.value = false;
 
-  // 4. Reset the turn & timer
   currentPlayer.value = 1;
   restartTimer();
+}
+
+function continueGame() {
+  showPauseModal.value = false;
+  resumeTimer();
+}
+
+function quitGame() {
+  showPauseModal.value = false;
+  restartGame();
+  router.push({ path: "/" });
 }
 
 // Get the column (0-indexed) from a 1D cell index.
@@ -457,7 +495,7 @@ function cpuMove() {
 }
 
 function playMove(col) {
-  if (winner.value) return;
+  if (showPauseModal.value || winner.value) return;
   const position = dropDisk(col);
   if (!position) return;
 

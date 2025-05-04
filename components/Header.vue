@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <button>Menu</button>
+    <button @click="$emit('toggle-pause')">Menu</button>
     <img src="/images/logo-connect-four.svg" alt="" />
   </div>
 </template>
@@ -16,3 +16,7 @@
   }
 }
 </style>
+
+<script setup>
+const emit = defineEmits(["toggle-pause"]);
+</script>
