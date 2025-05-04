@@ -13,10 +13,10 @@
   p,
   ol,
   ul {
-    @apply text-base md:text-xl;
+    @apply text-lg xl:text-xl;
   }
   h1 {
-    @apply text-5xl uppercase;
+    @apply text-4xl lg:text-5xl uppercase;
   }
   h2 {
     @apply text-3xl uppercase;

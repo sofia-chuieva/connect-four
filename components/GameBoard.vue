@@ -3,11 +3,13 @@
     <Header @toggle-pause="togglePause" />
     <div class="player-cards-wrapper">
       <PlayerCard
+        id="player-1"
         icon="player-one-smiley-face.svg"
         player="You"
         :score="playerScore"
       />
       <PlayerCard
+        id="player-2"
         icon="player-two-smiley-face.svg"
         player="CPU"
         :score="cpuScore"
@@ -540,7 +542,7 @@ const markerStyle = computed(() => {
   @apply relative mx-auto flex h-screen w-full flex-col items-center justify-center px-10 z-20;
 
   .player-cards-wrapper {
-    @apply absolute flex w-280 justify-between items-center;
+    @apply lg:absolute w-125 lg:w-220 gap-12 pb-8 lg:pb-0 lg:gap-0 flex justify-between items-center;
   }
 
   .game-board {
@@ -557,7 +559,7 @@ const markerStyle = computed(() => {
         @apply absolute inset-0 grid h-[420px] w-[500px] grid-cols-7 gap-[0.8rem] px-[0.8rem] py-0 z-[6];
 
         .marker-wrapper {
-          @apply absolute -top-16 grid h-12 w-full grid-cols-7 gap-[0.8rem] [grid-template-areas:'col1_col2_col3_col4_col5_col6_col7'] px-[0.8rem] pt-[0.8rem] z-[4];
+          @apply absolute -top-16 hidden lg:grid h-12 w-full grid-cols-7 gap-[0.8rem] [grid-template-areas:'col1_col2_col3_col4_col5_col6_col7'] px-[0.8rem] pt-[0.8rem] z-[4];
 
           .marker {
             @apply flex justify-center;
