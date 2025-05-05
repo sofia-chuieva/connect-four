@@ -39,7 +39,7 @@
             :class="['col', `col${col}`]"
             @mouseenter="hoverColumn = col - 1"
             @mouseleave="hoverColumn = null"
-            @click="playMove(col - 1)"
+            @click="currentPlayer === 1 && playMove(col - 1)"
           ></div>
         </div>
         <div class="cells-grid">
@@ -108,6 +108,7 @@ const playerScore = ref(0);
 const cpuScore = ref(0);
 const showWinnerModal = ref(false);
 const showPauseModal = ref(false);
+let cpuTimeoutId = null;
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
 
@@ -122,12 +123,24 @@ let diskId = 0;
 
 let intervalId;
 
+function handlePlayerTimeout() {
+  if (winner.value) return;
+  winner.value = 2;
+  cpuScore.value += 1;
+  showWinnerModal.value = true;
+  clearInterval(intervalId);
+}
+
 function startTimer() {
   intervalId = setInterval(() => {
     if (initialTimer.value > 0) {
       initialTimer.value--;
     } else {
-      clearInterval(intervalId);
+      if (currentPlayer.value === 1) {
+        handlePlayerTimeout();
+      } else {
+        restartTimer();
+      }
     }
   }, 1000);
 }
@@ -148,7 +161,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  clearInterval(intervalId); // avoid a stray interval if the page changes
+  clearInterval(intervalId);
+  clearTimeout(cpuTimeoutId);
 });
 
 function togglePause() {
@@ -175,6 +189,7 @@ function restartGame() {
 
   currentPlayer.value = 1;
   restartTimer();
+  clearTimeout(cpuTimeoutId);
 }
 
 function continueGame() {
@@ -301,25 +316,20 @@ function scorePosition(board, player) {
 function evaluateWindow(window, player) {
   let score = 0;
 
-  let oppositePiece = 1;
-  if (player == 1) {
-    oppositePiece = 2;
-  }
-
-  const cpuPieces = window.filter((v) => v === 2).length;
-  const playerPieces = window.filter((v) => v === 1).length;
+  const cpuPieces = window.filter((v) => v === player).length;
+  const playerPieces = window.filter((v) => v !== player && v !== 0).length;
   const empties = 4 - cpuPieces - playerPieces;
 
   if (cpuPieces == 4) {
     score += 100;
   } else if (cpuPieces == 3 && empties == 1) {
-    score += 5;
+    score += 10;
   } else if (cpuPieces == 2 && empties == 2) {
     score += 2;
   }
 
   if (playerPieces == 3 && empties == 1) {
-    score -= 4;
+    score -= 80;
   }
 
   return score;
@@ -332,9 +342,8 @@ function winnerOnGrid(board) {
   return 0;
 }
 
-function isWinningMove(board, player) {
-  winningCells.value = [];
-
+function findWinningCells(board, player) {
+  const cells = [];
   //   // vertical
   for (let row = 0; row < rows - 3; row++) {
     for (let col = 0; col < cols; col++) {
@@ -344,13 +353,12 @@ function isWinningMove(board, player) {
         board[row + 2][col] === player &&
         board[row + 3][col] === player
       ) {
-        winningCells.value = [
+        return [
           { row, col },
           { row: row + 1, col },
           { row: row + 2, col },
           { row: row + 3, col },
         ];
-        return true;
       }
     }
   }
@@ -363,13 +371,12 @@ function isWinningMove(board, player) {
         board[row][col + 2] === player &&
         board[row][col + 3] === player
       ) {
-        winningCells.value = [
+        return [
           { row, col },
           { row, col: col + 1 },
           { row, col: col + 2 },
           { row, col: col + 3 },
         ];
-        return true;
       }
     }
   }
@@ -382,13 +389,12 @@ function isWinningMove(board, player) {
         board[row + 2][col + 2] === player &&
         board[row + 3][col + 3] === player
       ) {
-        winningCells.value = [
+        return [
           { row, col },
           { row: row + 1, col: col + 1 },
           { row: row + 2, col: col + 2 },
           { row: row + 3, col: col + 3 },
         ];
-        return true;
       }
     }
   }
@@ -401,17 +407,20 @@ function isWinningMove(board, player) {
         board[row - 2][col + 2] === player &&
         board[row - 3][col + 3] === player
       ) {
-        winningCells.value = [
+        return [
           { row, col },
           { row: row - 1, col: col + 1 },
           { row: row - 2, col: col + 2 },
           { row: row - 3, col: col + 3 },
         ];
-        return true;
       }
     }
   }
-  return false;
+  return null;
+}
+
+function isWinningMove(board, player) {
+  return !!findWinningCells(board, player);
 }
 
 function evaluateBoard(board) {
@@ -424,47 +433,45 @@ function isBoardFull(b) {
   return b.every((row) => row.every((cell) => cell !== 0));
 }
 
-function minimax(board, alpha, beta, maximize, depth) {
-  const win = winnerOnGrid(board);
-  if (win === 1) return [-99999, null];
-  if (win === 2) return [99999, null];
-  if (depth === 0 || isBoardFull(board)) {
-    return [evaluateBoard(board), null];
+function minimax(node, alpha, beta, maximise, depth) {
+  const win = winnerOnGrid(node);
+  if (win === 1) return [-Infinity, null]; // human already wins
+  if (win === 2) return [Infinity, null]; // CPU already wins
+  if (depth === 0 || isBoardFull(node)) {
+    return [evaluateBoard(node), null];
   }
-  let bestVal;
-  if (maximize) {
-    bestVal = [-99999, null];
-    for (let col = 0; col < cols; col++) {
-      const newBoard = cloneBoard(board);
 
-      const row = lowestEmptyRow(newBoard, col);
-      if (row === -1) continue;
+  let bestScore = maximise ? -Infinity : Infinity;
+  let bestCol = null;
 
-      newBoard[row][col] = 2;
-      let [value] = minimax(newBoard, alpha, beta, false, depth - 1);
-      if (value > bestVal[0]) bestVal = [value, col];
+  for (let col = 0; col < cols; col++) {
+    const row = lowestEmptyRow(node, col);
+    if (row === -1) continue; // column full
 
-      alpha = Math.max(alpha, bestVal[0]);
-      if (alpha >= beta) break;
+    const child = cloneBoard(node);
+    child[row][col] = maximise ? 2 : 1;
+
+    const [score] = minimax(child, alpha, beta, !maximise, depth - 1);
+
+    // first legal move OR strictly better score
+    if (
+      bestCol === null ||
+      (maximise && score > bestScore) ||
+      (!maximise && score < bestScore)
+    ) {
+      bestScore = score;
+      bestCol = col;
     }
-    return bestVal;
-  } else {
-    bestVal = [99999, null];
-    for (let col = 0; col < cols; col++) {
-      const newBoard = cloneBoard(board);
 
-      const row = lowestEmptyRow(newBoard, col);
-      if (row === -1) continue;
-
-      newBoard[row][col] = 1;
-      let [value] = minimax(newBoard, alpha, beta, true, depth - 1);
-
-      if (value < bestVal[0]) bestVal = [value, col];
-      beta = Math.min(beta, bestVal[0]);
-      if (alpha >= beta) break;
+    if (maximise) {
+      alpha = Math.max(alpha, bestScore);
+    } else {
+      beta = Math.min(beta, bestScore);
     }
+    if (alpha >= beta) break; // α-β cutoff
   }
-  return bestVal;
+
+  return [bestScore, bestCol];
 }
 
 function cloneBoard(board) {
@@ -472,14 +479,23 @@ function cloneBoard(board) {
 }
 
 function cpuMove() {
-  setTimeout(() => {
-    const [, bestCol] = minimax(
+  cpuTimeoutId = setTimeout(() => {
+    let [, bestCol] = minimax(
       cloneBoard(board.value),
       -Infinity,
       Infinity,
       true,
       depth.value
     );
+    if (bestCol === null) {
+      for (let col = 0; col < cols; col++) {
+        if (lowestEmptyRow(board.value, col) !== -1) {
+          // column not full
+          bestCol = col;
+          break;
+        }
+      }
+    }
     if (bestCol !== null) playMove(bestCol);
   }, 1200);
 }
@@ -490,18 +506,27 @@ function playMove(col) {
   if (!position) return;
 
   if (isWinningMove(board.value, currentPlayer.value)) {
-    console.log(
-      `Player ${currentPlayer.value} wins! Cells:`,
-      winningCells.value
-    );
-    winner.value = currentPlayer.value;
-    showWinnerModal.value = !showWinnerModal.value;
-    clearInterval(intervalId);
-    if (winner.value === 1) {
-      playerScore.value += 1;
-    } else {
-      cpuScore.value += 1;
+    const cells = findWinningCells(board.value, currentPlayer.value);
+    if (cells) {
+      winningCells.value = cells;
+      winner.value = currentPlayer.value;
+      showWinnerModal.value = true;
+      clearInterval(intervalId);
+      clearTimeout(cpuTimeoutId);
+      if (winner.value === 1) {
+        playerScore.value += 1;
+      } else {
+        cpuScore.value += 1;
+      }
+      return;
     }
+  }
+
+  if (isBoardFull(board.value)) {
+    clearInterval(intervalId);
+    clearTimeout(cpuTimeoutId);
+    showWinnerModal.value = true;
+    winner.value = 0;
     return;
   }
 
@@ -564,7 +589,7 @@ const markerStyle = computed(() => {
           @apply relative cursor-pointer;
 
           .disk-wrapper {
-            @apply relative inset-0 h-10 w-10 md:h-14 md:w-14 pointer-events-none;
+            @apply relative inset-0 h-12 w-12 md:h-14 md:w-14 pointer-events-none;
             animation: dropAnimation 0.5s ease-out;
 
             .winner-circle {

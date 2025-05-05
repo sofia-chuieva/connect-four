@@ -3,9 +3,9 @@
     <div class="modal">
       <h1 class="heading">Choose difficulty</h1>
       <div class="levels">
-        <p @click="goToGame(3)">Easy</p>
+        <p @click="goToGame(2)">Easy</p>
         <p @click="goToGame(6)">Medium</p>
-        <p @click="goToGame(9)">Hard</p>
+        <p @click="goToGame(8)">Hard</p>
       </div>
     </div>
   </div>
@@ -50,6 +50,6 @@ const router = useRouter();
 
 function goToGame(d) {
   game.setDepth(d);
-  router.push("/game");
+  router.replace("/game");
 }
 </script>
