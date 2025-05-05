@@ -38,12 +38,12 @@
   @apply fixed inset-0 bg-black/75 z-40;
 
   .container {
-    @apply mx-auto max-w-3xl px-10 w-full h-screen flex items-center justify-center;
+    @apply mx-auto max-w-3xl px-6 w-full h-screen flex items-center justify-center;
 
     .wrapper {
       @apply relative;
 
-      .modal-bg {
+      .menu-bg {
         @apply absolute inset-0 bg-black rounded-4xl top-4 z-10;
       }
 

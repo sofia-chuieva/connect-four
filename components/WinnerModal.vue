@@ -19,7 +19,7 @@
   @apply fixed top-0 left-0 w-full h-screen bg-black/75 z-40;
 
   .modal {
-    @apply bg-white rounded-4xl opacity-100 p-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    @apply bg-white w-[80%] md:w-fit rounded-4xl opacity-100 p-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 
     .heading {
       @apply text-center text-4xl text-dark-blue;

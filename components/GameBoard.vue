@@ -535,7 +535,7 @@ const markerStyle = computed(() => {
 @reference "../assets/css/main.css";
 
 .container {
-  @apply relative mx-auto flex h-screen w-full flex-col items-center justify-center px-10 z-20;
+  @apply relative mx-auto flex h-[90vh] xs:h-screen w-full flex-col items-center justify-center px-6 z-20;
 
   .player-cards-wrapper {
     @apply lg:absolute w-82 md:w-125 lg:w-220 gap-12 pb-8 lg:pb-0 lg:gap-0 flex justify-between items-center;
