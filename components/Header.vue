@@ -10,7 +10,7 @@
 @reference "../assets/css/main.css";
 
 .header {
-  @apply absolute px-10 md:px-0 top-[10%] md:top-[6%] 3xl:top-[20%] flex flex-row w-full justify-between md:max-w-125 lg:max-w-[632px] items-center;
+  @apply absolute px-10 md:px-0 top-[6%] 3xl:top-[20%] flex flex-row w-full justify-between md:max-w-125 lg:max-w-[632px] items-center;
 
   img {
     @apply w-12 md:w-fit;
