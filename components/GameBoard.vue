@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header @toggle-pause="togglePause" />
+    <Header @toggle-pause="togglePause" @restart="restartGame" />
     <div class="player-cards-wrapper">
       <PlayerCard
         id="player-1"
@@ -552,7 +552,7 @@ const markerStyle = computed(() => {
       }
 
       .marker-grid {
-        @apply absolute inset-0 grid md:h-[420px] md:w-[500px] grid-cols-7 gap-[0.6rem] px-2 lg:gap-[0.8rem] lg:px-[0.8rem] py-0 z-[6];
+        @apply absolute inset-0 grid md:h-[420px] md:w-[500px] grid-cols-7 gap-[0.6rem] px-2 md:gap-[0.8rem] md:px-[0.8rem] py-0 z-[6];
 
         .marker-wrapper {
           @apply absolute -top-16 hidden lg:grid h-12 w-full grid-cols-7 gap-[0.8rem] [grid-template-areas:'col1_col2_col3_col4_col5_col6_col7'] px-[0.8rem] pt-[0.8rem] z-[4];
@@ -568,13 +568,13 @@ const markerStyle = computed(() => {
       }
 
       .cells-grid {
-        @apply absolute inset-0 grid md:h-[420px] md:w-[500px] grid-cols-7 grid-rows-6 pb-[2.3rem] pt-2 px-2 gap-[0.6rem] lg:gap-[0.8rem] lg:px-[0.8rem] lg:pt-[0.8rem] z-[3];
+        @apply absolute inset-0 grid md:h-[420px] md:w-[500px] grid-cols-7 grid-rows-6 pb-[2.3rem] pt-2 px-2 gap-[0.6rem] md:gap-[0.8rem] md:px-[0.8rem] md:pt-[0.8rem] md:pb-0 z-[3];
 
         .cell {
           @apply relative cursor-pointer;
 
           .disk-wrapper {
-            @apply relative inset-0 h-10 w-10 lg:h-14 lg:w-14 pointer-events-none;
+            @apply relative inset-0 h-10 w-10 md:h-14 md:w-14 pointer-events-none;
             animation: dropAnimation 0.5s ease-out;
 
             .winner-circle {
@@ -623,6 +623,6 @@ const markerStyle = computed(() => {
 }
 
 .bg-footer {
-  @apply absolute bottom-0 h-[calc(50%-205px)] w-full rounded-t-[60px] bg-dark-blue;
+  @apply absolute bottom-0  h-[calc(50%-170px)] lg:h-[calc(50%-205px)] w-full rounded-t-[40px] lg:rounded-t-[60px] bg-dark-blue;
 }
 </style>
