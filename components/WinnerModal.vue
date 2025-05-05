@@ -1,7 +1,7 @@
 <template>
   <div class="modal-bg">
     <div class="modal">
-      <h1 class="heading">{{ winner === 1 ? "You" : "CPU" }} Won!</h1>
+      <h1 class="heading">{{ heading }}</h1>
       <div class="btn-wrapper">
         <button class="play-again" @click="$emit('restart')">
           <p>Play Again</p>
@@ -44,9 +44,17 @@
 </style>
 
 <script setup>
+import { computed } from "vue";
+
 const props = defineProps({
   winner: Number,
 });
 
 const emit = defineEmits(["restart"]);
+
+const heading = computed(() => {
+  if (props.winner === 1) return "You Won!";
+  if (props.winner === 2) return "CPU Won!";
+  return "It's a Draw";
+});
 </script>
