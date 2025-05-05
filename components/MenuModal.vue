@@ -4,8 +4,8 @@
       <h1 class="heading">Choose difficulty</h1>
       <div class="levels">
         <p @click="goToGame(2)">Easy</p>
-        <p @click="goToGame(6)">Medium</p>
-        <p @click="goToGame(8)">Hard</p>
+        <p @click="goToGame(5)">Medium</p>
+        <p @click="goToGame(7)">Hard</p>
       </div>
     </div>
   </div>
