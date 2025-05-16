@@ -89,6 +89,9 @@
 </template>
 
 <script setup>
+import PauseModal from "~/components/modals/PauseModal.vue";
+import WinnerModal from "~/components/modals/WinnerModal.vue";
+import MenuModal from "~/components/modals/MenuModal.vue";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGameStore } from "~/stores/game";

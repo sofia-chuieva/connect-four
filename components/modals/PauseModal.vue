@@ -32,10 +32,10 @@
 </template>
 
 <style scoped>
-@reference "../assets/css/main.css";
+@reference "../../assets/css/main.css";
 
 .modal-bg {
-  @apply fixed inset-0 bg-black/75 z-40;
+  @apply fixed inset-0 bg-black/85 z-40;
 
   .container {
     @apply mx-auto max-w-3xl px-6 w-full h-screen flex items-center justify-center;
@@ -44,7 +44,7 @@
       @apply relative;
 
       .menu-bg {
-        @apply absolute inset-0 bg-black rounded-4xl top-4 z-10;
+        @apply absolute inset-0 bg-black rounded-4xl z-10 translate-y-3;
       }
 
       .modal {
@@ -76,7 +76,7 @@
             .continue-game-bg,
             .restart-game-bg,
             .quit-game-bg {
-              @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-3;
+              @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-2;
             }
           }
         }

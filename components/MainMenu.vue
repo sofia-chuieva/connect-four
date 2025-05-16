@@ -39,7 +39,7 @@
     @apply relative;
 
     .menu {
-      @apply relative z-20 md:min-w-[30rem] gap-16 p-10 items-center justify-between flex flex-col bg-dark-blue rounded-4xl border-[3px] border-black;
+      @apply relative z-20 md:min-w-[30rem] gap-16 px-10 pt-10 pb-12 items-center justify-between flex flex-col bg-dark-blue rounded-4xl border-[3px] border-black;
 
       .buttons {
         @apply flex flex-col w-full gap-8;
@@ -65,13 +65,13 @@
         .player-vs-cpu-bg,
         .player-vs-player-bg,
         .rules-bg {
-          @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-3;
+          @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-2;
         }
       }
     }
 
     .menu-bg {
-      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-4;
+      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-3;
     }
   }
 }

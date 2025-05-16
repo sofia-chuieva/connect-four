@@ -13,24 +13,20 @@
         <div>
           <h2>How to play</h2>
           <ol class="list-decimal list-inside md:leading-10">
-            <li>Red goes first in the first game.</li>
+            <li>Red goes first in the game.</li>
             <li>
-              Players must alternate turns, and only one disc can be dropped in
-              each turn.
+              Player and CPU must alternate turns; only one disc can be dropped
+              per turn.
             </li>
-            <li>The game ends when there is a 4-in-a-row or a stalemate.</li>
             <li>
-              The starter of the previous game goes second on the next game.
+              The game ends when either player connects 4 in a row, or when the
+              board fills
             </li>
           </ol>
         </div>
       </div>
       <div class="icon-check">
-        <img
-          @click="goToMenu"
-          src="/images/icon-check.svg"
-          alt="icon-check"
-        />
+        <img @click="goToMenu" src="/images/icon-check.svg" alt="icon-check" />
       </div>
       <div class="rules-bg"></div>
     </div>
@@ -71,7 +67,7 @@
     }
 
     .rules-bg {
-      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-6;
+      @apply absolute z-10 h-full w-full bg-black rounded-4xl top-5;
     }
   }
 }
