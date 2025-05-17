@@ -79,12 +79,15 @@
     </div>
   </div>
   <WinnerModal v-if="showWinnerModal" :winner="winner" @restart="restartGame" />
-  <PauseModal
-    v-if="showPauseModal"
-    @restart="restartGame"
-    @continue="continueGame"
-    @quit="quitGame"
-  />
+  <transition name="fade" mode="out-in" appear>
+    <PauseModal
+      v-if="showPauseModal"
+      @restart="restartGame"
+      @continue="continueGame"
+      @quit="quitGame"
+    />
+  </transition>
+
   <div class="bg-footer"></div>
 </template>
 
@@ -552,6 +555,18 @@ const markerStyle = computed(() => {
 <style scoped>
 @reference "../assets/css/main.css";
 
+.fade-enter-from,
+.fade-leave-to {
+  @apply opacity-0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  @apply opacity-100;
+}
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-opacity duration-200 ease-in-out;
+}
 .container {
   @apply relative mx-auto flex h-[90vh] xs:h-screen w-full flex-col items-center justify-center px-6 z-20;
 

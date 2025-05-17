@@ -26,12 +26,26 @@
       <div class="menu-bg"></div>
     </div>
   </div>
-  <MenuModal v-if="showModal" />
+  <transition name="fade">
+    <MenuModal v-if="showModal" />
+  </transition>
 </template>
 
 <style scoped>
 @reference "../assets/css/main.css";
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
 .container {
   @apply mx-auto max-w-3xl px-10 w-full h-screen flex items-center justify-center;
 
