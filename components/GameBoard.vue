@@ -94,7 +94,6 @@
 <script setup>
 import PauseModal from "~/components/modals/PauseModal.vue";
 import WinnerModal from "~/components/modals/WinnerModal.vue";
-import MenuModal from "~/components/modals/MenuModal.vue";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGameStore } from "~/stores/game";
@@ -115,6 +114,8 @@ const cpuScore = ref(0);
 const showWinnerModal = ref(false);
 const showPauseModal = ref(false);
 let cpuTimeoutId = null;
+let winnerModalTimeoutId = null;
+
 // Track the current player (1 or 2)
 const currentPlayer = ref(1);
 
@@ -133,7 +134,9 @@ function handlePlayerTimeout() {
   if (winner.value) return;
   winner.value = 2;
   cpuScore.value += 1;
-  showWinnerModal.value = true;
+  winnerModalTimeoutId = setTimeout(() => {
+    showWinnerModal.value = true;
+  }, 1500);
   clearInterval(intervalId);
 }
 
@@ -169,6 +172,7 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(intervalId);
   clearTimeout(cpuTimeoutId);
+  clearTimeout(winnerModalTimeoutId);
 });
 
 function togglePause() {
@@ -192,6 +196,7 @@ function restartGame() {
 
   winner.value = null;
   showWinnerModal.value = false;
+  clearTimeout(winnerModalTimeoutId);
 
   currentPlayer.value = 1;
   restartTimer();
@@ -516,7 +521,9 @@ function playMove(col) {
     if (cells) {
       winningCells.value = cells;
       winner.value = currentPlayer.value;
-      showWinnerModal.value = true;
+      winnerModalTimeoutId = setTimeout(() => {
+        showWinnerModal.value = true;
+      }, 1500);
       clearInterval(intervalId);
       clearTimeout(cpuTimeoutId);
       if (winner.value === 1) {
@@ -531,7 +538,9 @@ function playMove(col) {
   if (isBoardFull(board.value)) {
     clearInterval(intervalId);
     clearTimeout(cpuTimeoutId);
-    showWinnerModal.value = true;
+    winnerModalTimeoutId = setTimeout(() => {
+      showWinnerModal.value = true;
+    }, 1500);
     winner.value = 0;
     return;
   }
