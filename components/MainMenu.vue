@@ -56,7 +56,7 @@
       @apply relative z-20 md:min-w-[30rem] gap-16 px-10 pt-10 pb-12 items-center justify-between flex flex-col bg-dark-blue rounded-4xl border-[3px] border-black;
 
       .buttons {
-        @apply flex flex-col w-full gap-8;
+        @apply flex flex-col w-full gap-6;
 
         .btn-wrapper {
           @apply relative;
