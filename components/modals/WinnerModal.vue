@@ -24,11 +24,15 @@
     .heading {
       @apply text-center text-4xl text-dark-blue;
     }
+
     .btn-wrapper {
       @apply relative mt-6;
 
       button {
-        @apply flex text-left cursor-pointer px-8 py-3 relative z-20 w-full justify-between items-center uppercase rounded-3xl border-[3px] border-black;
+        @apply flex text-left cursor-pointer px-8 py-3 relative z-20 w-full justify-center items-center uppercase rounded-3xl border-[3px] border-black;
+        transform-style: preserve-3d;
+        transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+          background 150ms cubic-bezier(0, 0, 0.58, 1);
       }
 
       .play-again {
@@ -36,7 +40,18 @@
       }
 
       .play-again-bg {
-        @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-3;
+        @apply absolute inset-0 bg-black rounded-3xl z-10;
+        transform: translate3d(0, 0.75em, -1em);
+        transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+          box-shadow 150ms cubic-bezier(0, 0, 0.58, 1);
+      }
+
+      button:hover {
+        transform: translate(0, 0.35em);
+      }
+
+      .play-again-bg:hover {
+        transform: translate3d(0, 0.5em, -1em);
       }
     }
   }

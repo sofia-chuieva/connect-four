@@ -57,52 +57,66 @@ const emit = defineEmits(["continue", "restart", "quit"]);
 
 .modal-bg {
   @apply fixed inset-0 bg-black/85 z-40;
-}
 
-.container {
-  @apply mx-auto max-w-3xl px-6 w-full h-screen flex items-center justify-center;
-}
+  .container {
+    @apply mx-auto max-w-3xl px-4 w-full h-screen flex items-center justify-center;
 
-.wrapper {
-  @apply relative;
-}
+    .wrapper {
+      @apply relative w-full max-w-[30rem];
 
-.menu-bg {
-  @apply absolute inset-0 bg-black rounded-4xl z-10 translate-y-3;
-}
+      .menu-bg {
+        @apply absolute inset-0 bg-black rounded-4xl z-10 translate-y-3;
+      }
 
-.modal {
-  @apply relative z-20 md:min-w-[30rem] gap-16 p-10 flex flex-col items-center bg-dark-blue rounded-4xl border-[3px] border-black;
-}
+      .modal {
+        @apply relative z-20 gap-16 p-10 flex flex-col items-center bg-dark-blue rounded-4xl border-[3px] border-black;
 
-.heading {
-  @apply text-center text-4xl text-white;
-}
+        .heading {
+          @apply text-center text-4xl text-white;
+        }
 
-.buttons {
-  @apply flex flex-col w-full gap-6;
-}
+        .buttons {
+          @apply flex flex-col w-full gap-6;
 
-.btn-wrapper {
-  @apply relative;
-}
+          .btn-wrapper {
+            @apply relative;
 
-.btn-wrapper button {
-  @apply flex w-full justify-center items-center cursor-pointer px-8 py-5 uppercase rounded-3xl border-[3px] border-black relative z-20;
-}
+            button {
+              @apply flex w-full justify-center items-center cursor-pointer px-8 py-4 sm:py-5 uppercase rounded-3xl border-[3px] border-black relative z-20;
+            }
 
-.continue-game,
-.restart-game {
-  @apply bg-white;
-}
+            .continue-game-bg,
+            .restart-game-bg,
+            .quit-game-bg {
+              @apply absolute inset-0 bg-black rounded-3xl z-10;
+              transform: translate3d(0, 0.75em, -1em);
+              transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+                box-shadow 150ms cubic-bezier(0, 0, 0.58, 1);
+            }
 
-.quit-game {
-  @apply bg-red;
-}
+            button:hover {
+              transform: translate(0, 0.35em);
+            }
 
-.continue-game-bg,
-.restart-game-bg,
-.quit-game-bg {
-  @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-2;
+            .continue-game-bg:hover,
+            .restart-game-bg:hover,
+            .quit-game-bg:hover {
+              transform: translate3d(0, 0.5em, -1em);
+            }
+
+            .continue-game {
+              @apply bg-white;
+            }
+            .restart-game {
+              @apply bg-white;
+            }
+            .quit-game {
+              @apply bg-red;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

@@ -37,7 +37,7 @@
 @reference "../assets/css/main.css";
 
 .container {
-  @apply mx-auto max-w-3xl px-10 w-full h-screen flex items-center justify-center;
+  @apply mx-auto max-w-3xl px-4 xs:px-10 w-full h-[90vh] xs:h-screen flex items-center justify-center;
 
   .wrapper {
     @apply relative;
@@ -54,7 +54,12 @@
       }
 
       h2 {
-        @apply text-light-blue pb-2 md:pb-3;
+        @apply text-light-blue pb-2 md:pb-3 text-2xl xs:text-3xl;
+      }
+
+      p,
+      ol {
+        @apply text-base sm:text-xl;
       }
     }
 
@@ -62,7 +67,7 @@
       @apply absolute left-1/2 z-20 -translate-x-1/2 -bottom-[8%];
 
       img {
-        @apply w-22 cursor-pointer;
+        @apply w-18 xs:w-22 cursor-pointer;
       }
     }
 

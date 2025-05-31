@@ -11,7 +11,11 @@
           <div class="btn-wrapper">
             <button @click="toggleModal" class="player-vs-cpu-btn">
               <p>Player vs CPU</p>
-              <img src="/images/player-vs-cpu.svg" alt="player-vs-cpu" />
+              <img
+                class="icon"
+                src="/images/player-vs-cpu.svg"
+                alt="player-vs-cpu"
+              />
             </button>
             <div class="player-vs-cpu-bg"></div>
           </div>
@@ -47,13 +51,13 @@
   opacity: 1;
 }
 .container {
-  @apply mx-auto max-w-3xl px-10 w-full h-screen flex items-center justify-center;
+  @apply mx-auto max-w-3xl px-4 sm:px-10 w-full h-[90vh] xs:h-screen flex items-center justify-center;
 
   .wrapper {
-    @apply relative;
+    @apply relative w-full max-w-[30rem];
 
     .menu {
-      @apply relative z-20 md:min-w-[30rem] gap-16 px-10 pt-10 pb-12 items-center justify-between flex flex-col bg-dark-blue rounded-4xl border-[3px] border-black;
+      @apply relative z-20 gap-16 px-5 sm:px-10 pt-10 pb-12 items-center justify-between flex flex-col bg-dark-blue rounded-4xl border-[3px] border-black;
 
       .buttons {
         @apply flex flex-col w-full gap-6;
@@ -64,22 +68,38 @@
 
         button {
           @apply flex text-left cursor-pointer px-8 py-3 relative z-20 w-full justify-between items-center uppercase rounded-3xl border-[3px] border-black;
+          transform-style: preserve-3d;
+          transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+            background 150ms cubic-bezier(0, 0, 0.58, 1);
         }
 
         .player-vs-cpu-btn {
           @apply bg-red;
+
+          .icon {
+            @apply w-16 sm:w-fit;
+          }
         }
-        .player-vs-player-btn {
-          @apply bg-orange;
-        }
+
         .rules-btn {
-          @apply bg-white py-5;
+          @apply bg-white py-4 sm:py-5;
         }
 
         .player-vs-cpu-bg,
-        .player-vs-player-bg,
         .rules-bg {
-          @apply absolute inset-0 bg-black rounded-3xl z-10 translate-y-2;
+          @apply absolute inset-0 bg-black rounded-3xl z-10;
+          transform: translate3d(0, 0.75em, -1em);
+          transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+            box-shadow 150ms cubic-bezier(0, 0, 0.58, 1);
+        }
+
+        button:hover {
+          transform: translate(0, 0.35em);
+        }
+
+        .player-vs-cpu-bg:hover,
+        .rules-bg:hover {
+          transform: translate3d(0, 0.5em, -1em);
         }
       }
     }

@@ -620,7 +620,7 @@ const markerStyle = computed(() => {
             animation: dropAnimation 0.5s ease-out;
 
             .winner-circle {
-              @apply absolute w-6 h-6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white z-10 pointer-events-none;
+              @apply absolute w-4 h-4 xs:w-6 xs:h-6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white z-10 pointer-events-none;
             }
           }
 
