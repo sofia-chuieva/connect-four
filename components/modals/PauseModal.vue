@@ -98,12 +98,6 @@ const emit = defineEmits(["continue", "restart", "quit"]);
               transform: translate(0, 0.35em);
             }
 
-            .continue-game-bg:hover,
-            .restart-game-bg:hover,
-            .quit-game-bg:hover {
-              transform: translate3d(0, 0.5em, -1em);
-            }
-
             .continue-game {
               @apply bg-white;
             }

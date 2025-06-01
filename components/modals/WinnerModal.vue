@@ -49,10 +49,6 @@
       button:hover {
         transform: translate(0, 0.35em);
       }
-
-      .play-again-bg:hover {
-        transform: translate3d(0, 0.5em, -1em);
-      }
     }
   }
 }

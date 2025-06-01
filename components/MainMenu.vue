@@ -96,11 +96,6 @@
         button:hover {
           transform: translate(0, 0.35em);
         }
-
-        .player-vs-cpu-bg:hover,
-        .rules-bg:hover {
-          transform: translate3d(0, 0.5em, -1em);
-        }
       }
     }
 
