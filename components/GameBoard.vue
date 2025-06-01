@@ -616,7 +616,7 @@ const markerStyle = computed(() => {
           @apply relative cursor-pointer;
 
           .disk-wrapper {
-            @apply relative inset-0 h-12 w-12 md:h-14 md:w-14 pointer-events-none;
+            @apply relative inset-0 h-11 w-11 md:h-14 md:w-14 pointer-events-none;
             animation: dropAnimation 0.5s ease-out;
 
             .winner-circle {
