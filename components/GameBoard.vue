@@ -354,7 +354,6 @@ function winnerOnGrid(board) {
 }
 
 function findWinningCells(board, player) {
-  const cells = [];
   //   // vertical
   for (let row = 0; row < rows - 3; row++) {
     for (let col = 0; col < cols; col++) {
