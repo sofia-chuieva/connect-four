@@ -83,6 +83,9 @@ const emit = defineEmits(["continue", "restart", "quit"]);
 
             button {
               @apply flex w-full justify-center items-center cursor-pointer px-8 py-4 sm:py-5 uppercase rounded-3xl border-[3px] border-black relative z-20;
+              transform-style: preserve-3d;
+              transition: transform 150ms cubic-bezier(0, 0, 0.58, 1),
+                background 150ms cubic-bezier(0, 0, 0.58, 1);
             }
 
             .continue-game-bg,
