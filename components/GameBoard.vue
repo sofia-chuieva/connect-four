@@ -82,7 +82,6 @@
   <transition name="fade" mode="out-in" appear>
     <PauseModal
       v-if="showPauseModal"
-      @restart="restartGame"
       @continue="continueGame"
       @quit="quitGame"
     />

@@ -14,12 +14,6 @@
                 <div class="continue-game-bg"></div>
               </div>
               <div class="btn-wrapper">
-                <button @click="$emit('restart')" class="restart-game">
-                  <p>Restart</p>
-                </button>
-                <div class="restart-game-bg"></div>
-              </div>
-              <div class="btn-wrapper">
                 <button @click="$emit('quit')" class="quit-game">
                   <p>Quit Game</p>
                 </button>
@@ -34,7 +28,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["continue", "restart", "quit"]);
+const emit = defineEmits(["continue", "quit"]);
 </script>
 
 <style scoped>
@@ -89,7 +83,6 @@ const emit = defineEmits(["continue", "restart", "quit"]);
             }
 
             .continue-game-bg,
-            .restart-game-bg,
             .quit-game-bg {
               @apply absolute inset-0 bg-black rounded-3xl z-10;
               transform: translate3d(0, 0.75em, -1em);
@@ -104,9 +97,7 @@ const emit = defineEmits(["continue", "restart", "quit"]);
             .continue-game {
               @apply bg-white;
             }
-            .restart-game {
-              @apply bg-white;
-            }
+
             .quit-game {
               @apply bg-red;
             }
