@@ -94,9 +94,10 @@
 <script setup>
 import PauseModal from "~/components/modals/PauseModal.vue";
 import WinnerModal from "~/components/modals/WinnerModal.vue";
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGameStore } from "~/stores/game";
+import { useTimer } from "~/utils/useTimer";
 const router = useRouter();
 const game = useGameStore();
 const depth = computed(() => game.depth);
@@ -108,7 +109,6 @@ const cellIndices = Array.from({ length: totalCells }, (_, i) => i);
 const hoverColumn = ref(null);
 const winner = ref(null);
 const winningCells = ref([]);
-const initialTimer = ref(30);
 const playerScore = ref(0);
 const cpuScore = ref(0);
 const showWinnerModal = ref(false);
@@ -128,8 +128,6 @@ const board = ref(
 const droppedDisks = ref([]);
 let diskId = 0;
 
-let intervalId;
-
 function handlePlayerTimeout() {
   if (winner.value) return;
   winner.value = 2;
@@ -137,51 +135,24 @@ function handlePlayerTimeout() {
   winnerModalTimeoutId = setTimeout(() => {
     showWinnerModal.value = true;
   }, 1500);
-  clearInterval(intervalId);
+  pauseTimer();
 }
 
-function startTimer() {
-  intervalId = setInterval(() => {
-    if (initialTimer.value > 0) {
-      initialTimer.value--;
-    } else {
-      if (currentPlayer.value === 1) {
-        handlePlayerTimeout();
-      } else {
-        restartTimer();
-      }
-    }
-  }, 1000);
-}
-// timer for each turn
-function restartTimer() {
-  clearInterval(intervalId);
-  initialTimer.value = 30;
-  startTimer();
-}
+const timer = useTimer(30, handlePlayerTimeout);
 
-function resumeTimer() {
-  clearInterval(intervalId);
-  startTimer();
-}
-
-onMounted(() => {
-  restartTimer();
-});
+const initialTimer = timer.initialTimer;
+const restartTimer = timer.restartTimer;
+const resumeTimer = timer.resumeTimer;
+const pauseTimer = timer.pauseTimer;
 
 onUnmounted(() => {
-  clearInterval(intervalId);
   clearTimeout(cpuTimeoutId);
   clearTimeout(winnerModalTimeoutId);
 });
 
 function togglePause() {
   showPauseModal.value = !showPauseModal.value;
-  if (showPauseModal.value) {
-    clearInterval(intervalId); // pause timer
-  } else {
-    resumeTimer(); // resume
-  }
+  showPauseModal.value ? pauseTimer() : resumeTimer();
 }
 
 function restartGame() {
@@ -523,7 +494,7 @@ function playMove(col) {
       winnerModalTimeoutId = setTimeout(() => {
         showWinnerModal.value = true;
       }, 1500);
-      clearInterval(intervalId);
+      pauseTimer();
       clearTimeout(cpuTimeoutId);
       if (winner.value === 1) {
         playerScore.value += 1;
@@ -535,7 +506,7 @@ function playMove(col) {
   }
 
   if (isBoardFull(board.value)) {
-    clearInterval(intervalId);
+    pauseTimer();
     clearTimeout(cpuTimeoutId);
     winnerModalTimeoutId = setTimeout(() => {
       showWinnerModal.value = true;
