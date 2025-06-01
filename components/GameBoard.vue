@@ -635,7 +635,7 @@ const markerStyle = computed(() => {
 
 @keyframes dropAnimation {
   from {
-    transform: translateY(-50px);
+    transform: translateY(-500px);
   }
   to {
     transform: translateY(0);
