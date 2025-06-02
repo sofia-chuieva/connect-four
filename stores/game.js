@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useGameStore = defineStore("game", {
   state: () => ({
-    depth: 3,
+    depth: 2,
   }),
   actions: {
     setDepth(d) {
